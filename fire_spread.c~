@@ -1,0 +1,45 @@
+#include<stdio.h>
+#include<stdlib.h>
+#include<math.h>
+#include<time.h>
+#include<limits.h>
+
+
+#define N 6
+#define U ((long double)rand()/RAND_MAX)
+
+int main(){
+  int i,j,k;
+  int gen_size=pow(10,N);
+  long double u1, u2;
+  long double *generated1=(long double*)malloc(gen_size*sizeof(long double));
+  long double *generated2=(long double*)malloc(gen_size*sizeof(long double));
+  
+  FILE* fptr1;
+  fptr1=fopen("poisson1.tr","w");
+  if(fptr1==NULL){
+    printf("Error! File not opened\n");
+  }
+  
+  FILE* fptr2;
+  fptr2=fopen("poisson2.tr","w");
+  if(fptr2==NULL){
+    printf("Error! File not opened\n");
+  }
+
+  
+  for(i=0;i<gen_size;i++){
+    u1=U;
+    u2=U;
+    
+    generated1[i]=sqrtl(-2*log(u1))*cosl(2*M_PI*u2);
+    generated2[i]=sqrtl(-2*log(u1))*sinl(2*M_PI*u2);
+  }
+
+
+  for(i=0;i<gen_size;i++){
+    fprintf(fptr1,"%Lf\n", generated1[i]);
+    fprintf(fptr2,"%Lf\n", generated2[i]);    
+  }
+  return 0;
+}

@@ -1,0 +1,3 @@
+echo '
+plot 'forest.tr' matrix with image
+' | gnuplot
