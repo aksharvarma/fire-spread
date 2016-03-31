@@ -32,8 +32,8 @@
 /* Function declarations */
 /* A helper function that prints the forest at a particular time */
 int** print_forest(int** forest, int rows, int cols );
-/* A helper function that makes a string of a forest */
-char *string_forest(char*,int** forest, int rows, int cols);
+/* A helper function that prints the matrix to a file. */
+void file_print_forest(FILE *fptr, int** forest, int rows, int cols);
 /* A helper function that prints the whole grid */
 void print_grid(int** forest, int rows, int cols );
 /* Initialize the forest according to the correct probabilities */
@@ -50,45 +50,48 @@ long double pTree=0.8, pBurning=0.5, pLightning=0.00001, pImmune=0.25;
 int main(){
   /* Seed the random number. Always!!!! */
   srand(time(NULL));
-  int i, j, k, n=100;
+  /* Iteration variables and n x n matrix. */
+  int i, j, k, n=3;/* 100; */
+  /* Currently the same but can be changed when required. */
   int rows=n, cols=n;
-  int steps=pow(10,N);
-  long double u1, u2;
+  /* Number of steps to run simulation for */
+  int steps=1;/* pow(10,N); */
+  
+  /* The 3d matrix which stores all states of the forest */
+
   int ***forest=(int***)calloc(steps,sizeof(int**));
   for(i=0;i<steps;i++){
+    /* It is initialized with more space to accomodate the boundaries */
     forest[i]=(int**)calloc(n+2,sizeof(int*));
     for(j=0;j<n+2;j++){
-      forest[i][j]=(int*)calloc(n+2,sizeof(int));
+      forest[i][j]=(int*)calloc(n+2,sizeof(int)); /* Boundary again */
     }
   }
 
-  /* for(k=0;k<steps;k++){ */
-  /*   print_grid(forest[k], rows, cols); */
-  /* } */
-
   
+
+  /* Will be used to print to file */
   FILE* fptr;
   fptr=fopen("forest.tr","w");
   if(fptr==NULL){
     printf("Error! File not opened\n");
   }
   
+  /* Initializing the forest */
   initForest(forest[0], rows, cols, pTree, pBurning);
-  
-  for(k=0;k<steps;k++){
+  print_forest(forest[0], rows, cols);
+  file_print_forest(fptr,forest[0], rows, cols);
+
+  /* Simulating for other steps */
+  for(k=1;k<steps;k++){
+    /* Filling the periodic boundaries before each step. */
     fillBoundary(forest[k],rows, cols);
-    /* for(i=1;i<=rows;i++){ */
-    /*   for(j=1;j<=cols;j++){ */
-	if(k){
-	  spread(forest[k-1],forest[k],rows, cols, pImmune, pLightning);
-	  /* forest[k][i][j]=(forest[k-1][Nr(i)][Nc(j)]+ */
-	  /* 		   forest[k-1][Er(i)][Ec(j)]+ */
-	  /* 		   forest[k-1][Wr(i)][Wc(j)]+ */
-	  /* 		   forest[k-1][Sr(i)][Sc(j)])%3; */
-	}
-    /*   } */
-    /* } */
+    /* The actual spreading of the forest fire. */
+    spread(forest[k-1],forest[k],rows, cols, pImmune, pLightning);
+    
     print_forest(forest[k], rows, cols);
+    file_print_forest(fptr,forest[k], rows, cols);
+    fprintf(fptr, "\n");
   }
 
 
@@ -106,6 +109,7 @@ int main(){
 }
 
 
+/* This merely prints the forest matrix */
 int** print_forest(int** forest, int rows, int cols ){
   int i, j;
 
@@ -121,20 +125,20 @@ int** print_forest(int** forest, int rows, int cols ){
   return forest;
 }
 
-char *string_forest(char *s, int** forest, int rows, int cols){
+/* This prints to a file */
+void file_print_forest(FILE *fptr, int** forest, int rows, int cols){
   int i, j; 
  
   for(i=1;i<=rows;i++){
     for(j=1;j<=cols;j++){
-      sprintf(s, "%d ", forest[i][j]);
+      fprintf(fptr, "%d ", forest[i][j]);
     }
-    sprintf(s,":");
+    fprintf(fptr,"\n");
   }
-  sprintf(s,";");
-  sprintf(s,"?");
-  printf("%s", s);
-  return s;
+  return ;
 }
+
+/* This prints the whole grid. Made for testing the periodic boundary. */
 void print_grid(int** forest, int rows, int cols ){
   int i, j;
 
@@ -151,24 +155,26 @@ void print_grid(int** forest, int rows, int cols ){
 }
 
 
+/* Initialize the forest according to the requisite probabilities. */
 void initForest(int** forest,int rows, int cols, long double pTree, long double pBurning){
   int i,j;
 
   for(i=1;i<=rows;i++){
     for(j=1;j<=cols;j++){
-      if(U<pTree){
-	if(U<pBurning)
+      if(U<pTree){ /* Is there a tree? */
+	if(U<pBurning) /* Is it burning? */
 	  forest[i][j]=BURNING;
 	else
 	  forest[i][j]=TREE;
       }
       else
-	forest[i][j]=EMPTY;
+	forest[i][j]=EMPTY; /* Nothing there. */
     }
   }
   return;
 }
 
+/* This is the function that fills the periodic boundaries */
 void fillBoundary(int** forest, int rows, int cols){
   int i,j;
 
@@ -196,34 +202,24 @@ void fillBoundary(int** forest, int rows, int cols){
 }
 
 
+/* This is where the updating of the forest happens. */
 void spread(int** old, int** new, int rows, int cols, long double pImmune, long double pLightning){
   int i,j;
-
-  /* printf(":::::::SPREADER:::::::\n"); */
-  /* printf("Start\n"); */
-  /* print_grid(old, rows, cols); */
-  /* print_grid(new, rows, cols); */
   
   for(i=1;i<=rows;i++){
     for(j=1;j<=cols;j++){
-      /* printf("i:%d j:%d val:%d\n", i, j, old[i][j]); */
       if(old[i][j]==0){
-	/* printf("From nothing to nothing\n"); */
 	new[i][j]=EMPTY;
 	continue;
-	/* printf("EMPTY: %d %d\n", i, j); */
       }else if(old[i][j]==2){
-	/* printf("Burnt to the ground\n"); */
 	new[i][j]=EMPTY;
 	continue;
-	/* printf("BURNING: %d %d\n", i, j); */
       }else if(old[i][j]==1){
 	if(old[Nr(i)][Nc(j)]==BURNING ||
 	   old[Er(i)][Ec(j)]==BURNING ||
 	   old[Wr(i)][Wc(j)]==BURNING ||
 	   old[Sr(i)][Sc(j)]==BURNING 
 	   ){
-	/* printf("TREE: %d %d\n", i, j); */
 	  if(U<pImmune){
 	    new[i][j]=TREE;
 	    continue;
@@ -241,8 +237,5 @@ void spread(int** old, int** new, int rows, int cols, long double pImmune, long 
       }
     }
   }
-  /* printf("End\n"); */
-  /* print_grid(old, rows, cols); */
-  /* print_grid(new, rows, cols); */
   return;
 }
