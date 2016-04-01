@@ -1,3 +1,6 @@
+/* Don't use this humongous source. It has everything in the same place. */
+/* This has been split into four different files to ease things. */
+
 #include<stdio.h>
 #include<stdlib.h>
 #include<math.h>
