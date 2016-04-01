@@ -10,6 +10,9 @@
 /* This allows generationg of uniform random variables */
 #define U ((long double)rand()/RAND_MAX)
 
+
+
+#define VON_NEUMANN 1 /*Only edge-connected neighbours are counted.*/
 /* North neighbor */
 #define Nr(i) (i-1)
 #define Nc(j) (j)
@@ -24,7 +27,8 @@
 #define Sc(j) (j)
 
 
-/* For extending kinds neighbours */
+
+#define MOORE 2	/*Even diagonally connected cells are neighbours*/
 /* North-East neighbor */
 #define NEr(i) (i-1)
 #define NEc(j) (j+1)
@@ -43,8 +47,8 @@
 #define ERROR (-1)
 #define EMPTY (0)
 #define TREE (1)
-#define STILL_BURNING (2)
-#define BURNING (3)
+#define BURNING (2)
+#define STILL_BURNING (3)
 
 /* Kinds of trees (for exercise 6) */
 #define BABY (10)
@@ -75,22 +79,34 @@ void fillBoundary(int** forest, int rows, int cols);
 
 
 /* The function that decides the update function to choose */
-void spread(int** forest_old, int** forest_new, int rows, int cols, long double pImmune, long double pLightning, int type);
+void spread(int** forest_old, int** forest_new, int rows, int cols, long double pImmune, long double pLightning, int spread_type, int neighbourhood_type);
+
+/* This returns 1 if any neighbours burn, 0 otherwise */
+int do_neighbours_burn(int** forest, int row_index, int col_index, int neighbourhood_type);
+
+/* This counts the number of burning neighbours */
+int count_burning_neighbours(int** forest, int row_index, int col_index, int neighbourhood_type);
 
 /* The normal update function without any modifications. */
-void spread_normal(int** forest_old, int** forest_new, int rows, int cols, long double pImmune, long double pLightning);
+void spread_normal(int** forest_old, int** forest_new, int rows, int cols, long double pImmune, long double pLightning, int neighbourhood_type);
 
 /* The update function where trees burn for two iterations. */
-void spread_2_steps_to_burn(int** forest_old, int** forest_new, int rows, int cols, long double pImmune, long double pLightning);
+void spread_2_steps_to_burn(int** forest_old, int** forest_new, int rows, int cols, long double pImmune, long double pLightning, int neighbourhood_type);
 
 /* The update function where burning prob is number of burning neighbours. */
-void spread_burn_prob_neighbours(int** forest_old, int** forest_new, int rows, int cols, long double pImmune, long double pLightning);
+void spread_burn_prob_neighbours(int** forest_old, int** forest_new, int rows, int cols, long double pImmune, long double pLightning, int neighbourhood_type);
 
 
 /* Global Probability variables */
-long double pTree=0.8, pBurning=0.5, pLightning=0.00001, pImmune=0.25;
+/* long double pTree=0.8, pBurning=0.005, pLightning=0.00001, pImmune=0.25; */
+/* Values used for quick testing */
+long double pTree=0.8, pBurning=0.5, pLightning=0.01, pImmune=0.25;
 
 int main(){
+
+  printf("Empty:%d\nTree:%d\nBurning:%d\nStill Burning:%d\n\n",
+	 EMPTY, TREE, BURNING, STILL_BURNING);
+
   /* Seed the random number. Always!!!! */
   srand(time(NULL));
   /* Iteration variables and n x n matrix. */
@@ -99,6 +115,10 @@ int main(){
   int rows=n, cols=n;
   /* Number of steps to run simulation for */
   int steps=3;/* pow(10,N); */
+
+  int neighbourhood_type=MOORE;
+  int spread_type=BURN_PROB_NEIGHBOURS;
+  
   
   /* The 3d matrix which stores all states of the forest */
 
@@ -122,17 +142,21 @@ int main(){
   /* Initializing the forest */
   initForest(forest[0], rows, cols, pTree, pBurning);
   print_forest(forest[0], rows, cols);
+  printf("\n");
   file_print_forest(fptr,forest[0], rows, cols);
-
+  fprintf(fptr, "\n");
+  
   /* Simulating for other steps */
   for(k=1;k<steps;k++){
     /* Filling the periodic boundaries before each step. */
     fillBoundary(forest[k],rows, cols);
     /* The actual spreading of the forest fire. */
-    spread(forest[k-1],forest[k],rows, cols, pImmune, pLightning, NORMAL);
+    spread(forest[k-1],forest[k],rows, cols, pImmune, pLightning, spread_type, neighbourhood_type);
+    /* spread_burn_prob_neighbours(forest[k-1],forest[k],rows, cols, pImmune, pLightning, neighbourhood_type); */
     
     /* Printing the resultant forests */
     print_forest(forest[k], rows, cols);
+    printf("\n");
     file_print_forest(fptr,forest[k], rows, cols);
     fprintf(fptr, "\n");
   }
@@ -235,24 +259,105 @@ void fillBoundary(int** forest, int rows, int cols){
 
 
 /* This function selects which kind of update function to call. */
-void spread(int** old, int** new, int rows, int cols, long double pImmune, long double pLightning, int type){
+void spread(int** old, int** new, int rows, int cols, long double pImmune, long double pLightning, int spread_type, int neighbourhood_type){
 
   /* We swtich over "type" to select the spread function. */
-  switch(type){
+  switch(spread_type){
   case NORMAL:			/* The normal variation */
-    spread_normal(old,new,rows, cols, pImmune, pLightning);
+    printf("Normal fire\n");
+    spread_normal(old,new,rows, cols, pImmune, pLightning, neighbourhood_type);
+    break;
   case TWO_STEPS_TO_BURN:	/* Tree takes two steps to burn */
-    spread_2_steps_to_burn(old,new,rows, cols, pImmune, pLightning);
-  case BURN_PROB_NEIGHBOURS:
-    spread_burn_prob_neighbours(old,new,rows, cols, pImmune, pLightning);
+    printf("Two steps to burn\n");
+    spread_2_steps_to_burn(old,new,rows, cols, pImmune, pLightning, neighbourhood_type);
+    break;
+  case BURN_PROB_NEIGHBOURS:	/*Burning prob ~ on neighbour count*/
+    printf("Burning prob ~ on neighbour count\n");
+    spread_burn_prob_neighbours(old,new,rows, cols, pImmune, pLightning, neighbourhood_type);
+    break;
   default:
-    spread_normal(old,new,rows, cols, pImmune, pLightning);
+    printf("Defaulting\n");
+    spread_normal(old,new,rows, cols, pImmune, pLightning, neighbourhood_type);
+    break;
   }
 }
 
 
+
+/* This returns 1 if any neighbours burn, 0 otherwise */
+int do_neighbours_burn(int** forest, int row_index, int col_index, int neighbourhood_type){
+
+  int i=row_index;
+  int j=col_index;
+  
+  switch(neighbourhood_type){
+  case VON_NEUMANN:
+    return (forest[Nr(i)][Nc(j)]==BURNING ||
+	    forest[Er(i)][Ec(j)]==BURNING ||
+	    forest[Wr(i)][Wc(j)]==BURNING ||
+	    forest[Sr(i)][Sc(j)]==BURNING
+	    );
+  case MOORE:
+    return (forest[Nr(i)][Nc(j)]==BURNING ||
+	    forest[Er(i)][Ec(j)]==BURNING ||
+	    forest[Wr(i)][Wc(j)]==BURNING ||
+	    forest[Sr(i)][Sc(j)]==BURNING ||
+	    //Diagonals
+	    forest[NEr(i)][NEc(j)]==BURNING ||
+	    forest[SEr(i)][SEc(j)]==BURNING ||
+	    forest[NWr(i)][NWc(j)]==BURNING ||
+	    forest[SWr(i)][SWc(j)]==BURNING 
+	    );
+  default:
+    return 0;
+  }
+}
+
+/* This counts the number of burning neighbours */
+int count_burning_neighbours(int** forest, int row_index, int col_index, int neighbourhood_type){
+  int neighbors_on_fire=0;
+  int i=row_index;
+  int j=col_index;
+
+  switch(neighbourhood_type){
+  case VON_NEUMANN:
+    if(forest[Nr(i)][Nc(j)]==BURNING)
+      neighbors_on_fire++;
+    if(forest[Er(i)][Ec(j)]==BURNING)
+      neighbors_on_fire++;
+    if(forest[Wr(i)][Wc(j)]==BURNING)
+      neighbors_on_fire++;
+    if(forest[Sr(i)][Sc(j)]==BURNING)
+      neighbors_on_fire++;
+    break;
+  case MOORE:
+    if(forest[Nr(i)][Nc(j)]==BURNING)
+      neighbors_on_fire++;
+    if(forest[Er(i)][Ec(j)]==BURNING)
+      neighbors_on_fire++;
+    if(forest[Wr(i)][Wc(j)]==BURNING)
+      neighbors_on_fire++;
+    if(forest[Sr(i)][Sc(j)]==BURNING)
+      neighbors_on_fire++;
+    /* Diagonals */
+    if(forest[NEr(i)][NEc(j)]==BURNING)
+      neighbors_on_fire++;
+    if(forest[SEr(i)][SEc(j)]==BURNING)
+      neighbors_on_fire++;
+    if(forest[NWr(i)][NWc(j)]==BURNING)
+      neighbors_on_fire++;
+    if(forest[SWr(i)][SWc(j)]==BURNING)
+      neighbors_on_fire++;
+    break;
+  default:
+    break;
+  }
+  return neighbors_on_fire;
+}
+
+
 /* This is where the updating of the forest happens. */
-void spread_normal(int** old, int** new, int rows, int cols, long double pImmune, long double pLightning){
+void spread_normal(int** old, int** new, int rows, int cols, long double pImmune, long double pLightning, int neighbourhood_type){
   int i,j;
 
   /* Looping over all the cells */
@@ -263,11 +368,8 @@ void spread_normal(int** old, int** new, int rows, int cols, long double pImmune
       }else if(old[i][j]==BURNING){ /* If burning, burn down. */
 	new[i][j]=EMPTY;
       }else if(old[i][j]==TREE){ /* if tree, */
-	if(old[Nr(i)][Nc(j)]==BURNING ||
-	   old[Er(i)][Ec(j)]==BURNING ||
-	   old[Wr(i)][Wc(j)]==BURNING ||
-	   old[Sr(i)][Sc(j)]==BURNING 
-	   ){ 			/* and neigbours are burning */
+	if(do_neighbours_burn(old,i,j,neighbourhood_type)){
+	  /* and neigbours are burning */
 	  if(U<pImmune){
 	    new[i][j]=TREE;	/* keep tree if immune */
 	  }
@@ -287,7 +389,7 @@ void spread_normal(int** old, int** new, int rows, int cols, long double pImmune
 
 
 /* A tree takes two steps to burn. */
-void spread_2_steps_to_burn(int** old, int** new, int rows, int cols, long double pImmune, long double pLightning){
+void spread_2_steps_to_burn(int** old, int** new, int rows, int cols, long double pImmune, long double pLightning, int neighbourhood_type){
   int i,j;
 
   /* Looping over all the cells */
@@ -300,11 +402,7 @@ void spread_2_steps_to_burn(int** old, int** new, int rows, int cols, long doubl
       }else if(old[i][j]==STILL_BURNING){ /* has been burning, burn down */
 	new[i][j]=EMPTY;
       }else if(old[i][j]==TREE){ /* if tree, */
-	if(old[Nr(i)][Nc(j)]==BURNING ||
-	   old[Er(i)][Ec(j)]==BURNING ||
-	   old[Wr(i)][Wc(j)]==BURNING ||
-	   old[Sr(i)][Sc(j)]==BURNING 
-	   ){ 			/* and neigbours are burning */
+	if(do_neighbours_burn(old,i,j,neighbourhood_type)){ 			/* and neigbours are burning */
 	  if(U<pImmune){
 	    new[i][j]=TREE;	/* keep tree if immune */
 	  }
@@ -323,9 +421,23 @@ void spread_2_steps_to_burn(int** old, int** new, int rows, int cols, long doubl
 }
 
 /* This is where the updating of the forest happens. */
-void spread_burn_prob_neighbours(int** old, int** new, int rows, int cols, long double pImmune, long double pLightning){
+void spread_burn_prob_neighbours(int** old, int** new, int rows, int cols, long double pImmune, long double pLightning, int neighbourhood_type){
   int i,j;
   double neighbors_on_fire;
+  int n_neighbours;
+  double prob_of_burning;
+  
+  switch(neighbourhood_type){
+  case VON_NEUMANN:
+    n_neighbours=4;
+    break;
+  case MOORE:
+    n_neighbours=8;
+    break;
+  default:
+    n_neighbours=4;
+    break;
+  }
   
   /* Looping over all the cells */
   for(i=1;i<=rows;i++){
@@ -335,25 +447,14 @@ void spread_burn_prob_neighbours(int** old, int** new, int rows, int cols, long 
       }else if(old[i][j]==BURNING){ /* If burning, burn down. */
 	new[i][j]=EMPTY;
       }else if(old[i][j]==TREE){ /* If tree, */
-	if(old[Nr(i)][Nc(j)]==BURNING ||
-	   old[Er(i)][Ec(j)]==BURNING ||
-	   old[Wr(i)][Wc(j)]==BURNING ||
-	   old[Sr(i)][Sc(j)]==BURNING 
-	   ){			/* And neighbours are burning */
+	if(do_neighbours_burn(old,i,j,neighbourhood_type)){			/* And neighbours are burning */
 
 	  /* Count number of burning neighbours */
-	  neighbors_on_fire=0;
-	  if(old[Nr(i)][Nc(j)]==BURNING)
-	    neighbors_on_fire++;
-	  if(old[Er(i)][Ec(j)]==BURNING)
-	    neighbors_on_fire++;
-	  if(old[Wr(i)][Wc(j)]==BURNING)
-	    neighbors_on_fire++;
-	  if(old[Sr(i)][Sc(j)]==BURNING)
-	    neighbors_on_fire++;
+	  neighbors_on_fire=count_burning_neighbours(old,i,j,neighbourhood_type);
 
+	  prob_of_burning=neighbors_on_fire/n_neighbours;
 	  /* Prob according to number of burning neighbours  */
-	  if(U<(neighbors_on_fire)/4){
+	  if(U<prob_of_burning){
 	    new[i][j]=BURNING;	/* Burn it down */
 	  }
 	  else{
@@ -369,3 +470,4 @@ void spread_burn_prob_neighbours(int** old, int** new, int rows, int cols, long 
   }
   return;
 }
+
