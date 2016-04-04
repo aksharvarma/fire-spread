@@ -48,17 +48,27 @@
 #define BURNING (2)
 #define STILL_BURNING (3)
 
+#define AGE_IT (1)
 /* Kinds of trees (for exercise 6) */
 #define BABY (10)
-#define YOUNG (11)
-#define MIDDLE (12)
-#define OLD (13)
+#define YOUNG (BABY+AGE_IT)
+#define MIDDLE (YOUNG+AGE_IT)
+#define OLD (MIDDLE+AGE_IT)
+#define EMPTY_TREE (OLD+AGE_IT)	/* To handle an edge case */
 
+#define BURNING_INCREMENT (10)
+/* NOTE: ALWAYS KEEP THE BURNING NUMBERS 10 MORE THAN TREE NUMBERS */
+/* Kinds of trees (for exercise 6) */
+#define BABY_BURNING (BABY+BURNING_INCREMENT)
+#define YOUNG_BURNING (YOUNG+BURNING_INCREMENT)
+#define MIDDLE_BURNING (MIDDLE+BURNING_INCREMENT)
+#define OLD_BURNING (OLD+BURNING_INCREMENT)
+#define EMPTY_BURNING (OLD_BURNING+AGE_IT) /* To handle an edge case */
 
 /* Kinds of the spread update functions */
-#define NORMAL 1
-#define TWO_STEPS_TO_BURN 2
-#define BURN_PROB_NEIGHBOURS 3
-
+#define NORMAL (1)
+#define TWO_STEPS_TO_BURN (2)
+#define BURN_PROB_NEIGHBOURS (3)
+#define AGING_TREES (4)
 
 #endif

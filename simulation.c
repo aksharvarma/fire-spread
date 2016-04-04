@@ -27,8 +27,8 @@ int main(){
   int steps=3;/* pow(10,N); */
 
   /* The types of the neighbourhood and the fire spreading */
-  int neighbourhood_type=MOORE;
-  int spread_type=BURN_PROB_NEIGHBOURS;
+  int neighbourhood_type=VON_NEUMANN;
+  int spread_type=AGING_TREES;
   
   
   /* The 3d matrix which stores all states of the forest */

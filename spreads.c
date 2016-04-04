@@ -1,3 +1,7 @@
+/* This includes only the fire spread updating functions.
+   New variations on that should be added here.
+*/
+
 #include<stdio.h>
 #include<stdlib.h>
 #include<math.h>
@@ -19,7 +23,12 @@ void spread_2_steps_to_burn(int** forest_old, int** forest_new, int rows, int co
 /* The update function where burning prob is number of burning neighbours. */
 void spread_burn_prob_neighbours(int** forest_old, int** forest_new, int rows, int cols, long double pImmune, long double pLightning, int neighbourhood_type);
 
+/* The update function where the trees age slowly. */
+void spread_aging_trees(int** forest_old, int** forest_new, int rows, int cols, long double pImmune, long double pLightning, int neighbourhood_type);
 
+
+
+/* Actual definitions start now. */
 
 /* This function selects which kind of update function to call. */
 void spread(int** old, int** new, int rows, int cols, long double pImmune, long double pLightning, int spread_type, int neighbourhood_type){
@@ -37,6 +46,10 @@ void spread(int** old, int** new, int rows, int cols, long double pImmune, long 
   case BURN_PROB_NEIGHBOURS:	/*Burning prob ~ on neighbour count*/
     printf("Burning prob ~ on neighbour count\n");
     spread_burn_prob_neighbours(old,new,rows, cols, pImmune, pLightning, neighbourhood_type);
+    break;
+  case AGING_TREES:	/* Trees age */
+    printf("Trees age\n");
+    spread_aging_trees(old,new,rows, cols, pImmune, pLightning, neighbourhood_type);
     break;
   default:
     printf("Defaulting\n");
@@ -161,3 +174,84 @@ void spread_burn_prob_neighbours(int** old, int** new, int rows, int cols, long 
   return;
 }
 
+
+void spread_aging_trees(int** old, int** new, int rows, int cols, long double pImmune, long double pLightning, int neighbourhood_type){
+  int i,j;
+  /* This is to tackle issues where the forest hasn't been 
+     initialized with ages but the aging_trees spread model
+     has been asked for.
+  */
+  static int init_flag=1;
+  /* This is to ensure that the next block only runs once. */
+  
+  printf("init_flag: %d\n", init_flag);
+  if(init_flag){
+    print_forest(old, rows, cols);
+    printf("\n");
+  }
+  
+  if(init_flag){
+    for(i=1;i<=rows;i++){
+      for(j=1;j<=cols;j++){
+	if(old[i][j]==TREE){
+	  old[i][j]=random_age();
+	}else if(old[i][j]==BURNING){
+	  old[i][j]=random_age()+BURNING_INCREMENT;
+	}else if(old[i][j]==EMPTY){
+	  old[i][j]=EMPTY;
+	}else{
+	  old[i][j]=ERROR;
+	}
+      }
+    }
+  }
+
+  if(init_flag){
+    print_forest(old, rows, cols);
+    printf("\n");
+  }
+  
+  init_flag*=0;
+  
+  /* Looping over all the cells */
+  for(i=1;i<=rows;i++){
+    for(j=1;j<=cols;j++){
+      if(old[i][j]==EMPTY ||
+	 old[i][j]==EMPTY_TREE ||
+	 old[i][j]==EMPTY_BURNING){
+	/* If empty/tree died/tree burned down --> empty */
+	new[i][j]=EMPTY;
+      }else if(old[i][j]>=BABY_BURNING &&
+	       old[i][j]<=OLD_BURNING){ /* If burning, age tree. */
+	switch(old[i][j]){
+	case BABY_BURNING:
+	case OLD_BURNING:
+	  new[i][j]=EMPTY;
+	case YOUNG_BURNING:
+	case MIDDLE_BURNING:
+	  new[i][j]=old[i][j]+AGE_IT;
+	}
+	
+      }else if(old[i][j]>=BABY &&
+	       old[i][j]<=OLD){ /* if tree, */
+	new[i][j]=old[i][j]+AGE_IT; /* age the tree */
+	if(do_neighbours_burn(old,i,j,neighbourhood_type)){
+	  /* and neigbours are burning */
+	  if(U<pImmune){
+	    new[i][j]=new[i][j]; /* Keep as tree */
+	  }
+	  else{
+	    new[i][j]=new[i][j]+BURNING_INCREMENT;
+	    /* else burn it. */
+	  }
+	}else{
+	  new[i][j]=new[i][j];	/* if neighbors aren't burning */
+	}
+      }else{			/* If it's none of these, */
+	new[i][j]=ERROR;	/* there's something wrong. */
+      }
+    }
+  }
+  return;
+
+}

@@ -6,17 +6,29 @@
 #include<math.h>
 #include<time.h>
 #include<limits.h>
+#include"utils.h"
 #include"macros.h"
 
 /* Function declarations */
+
 /* A helper function that prints the forest at a particular time */
 int** print_forest(int** forest, int rows, int cols );
+
 /* A helper function that prints the matrix to a file. */
 void file_print_forest(FILE *fptr, int** forest, int rows, int cols);
+
 /* A helper function that prints the whole grid */
 void print_grid(int** forest, int rows, int cols );
+
 /* Initialize the forest according to the correct probabilities */
 void initForest(int** forest,int rows, int cols, long double pTree,long double pBurning);
+
+/* Find a random age for a tree. For initialization purposes. */
+int random_age();
+
+/* Initialize the forest with aging tree */
+void initForest_aging(int** forest,int rows, int cols, long double pTree,long double pBurning);
+
 /* After every iteration, renew the boundaries */
 void fillBoundary(int** forest, int rows, int cols);
 

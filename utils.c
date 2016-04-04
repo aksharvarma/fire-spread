@@ -1,3 +1,6 @@
+/* This includes utility files that are used to make the other things
+   easier. */
+
 #include<stdio.h>
 #include<stdlib.h>
 #include<math.h>
@@ -7,14 +10,25 @@
 #include"macros.h"
 
 /* Function declarations */
+
 /* A helper function that prints the forest at a particular time */
 int** print_forest(int** forest, int rows, int cols );
+
 /* A helper function that prints the matrix to a file. */
 void file_print_forest(FILE *fptr, int** forest, int rows, int cols);
+
 /* A helper function that prints the whole grid */
 void print_grid(int** forest, int rows, int cols );
+
 /* Initialize the forest according to the correct probabilities */
 void initForest(int** forest,int rows, int cols, long double pTree,long double pBurning);
+
+/* Find a random age for a tree. For initialization purposes. */
+int random_age();
+
+/* Initialize the forest with aging tree */
+void initForest_aging(int** forest,int rows, int cols, long double pTree,long double pBurning);
+
 /* After every iteration, renew the boundaries */
 void fillBoundary(int** forest, int rows, int cols);
 
@@ -89,6 +103,44 @@ void initForest(int** forest,int rows, int cols, long double pTree, long double 
   }
   return;
 }
+
+int random_age(){
+  int age;
+
+  if(U<0.25)
+    age=BABY;
+  else if(U<0.5)
+    age=YOUNG;
+  else if(U<0.75)
+    age=MIDDLE;
+  else
+    age=OLD;
+  
+  return age;
+}
+
+/* Initialize the forest according to the requisite probabilities. */
+void initForest_aging(int** forest,int rows, int cols, long double pTree, long double pBurning){
+  int i,j, age;
+
+  for(i=1;i<=rows;i++){
+    for(j=1;j<=cols;j++){
+      if(U<pTree){ /* Is there a tree? */
+	/* Find the age */
+	age=random_age();
+	
+	if(U<pBurning) /* Is it burning? */
+	  forest[i][j]=age+BURNING_INCREMENT; /* Ref. macros.h */
+	else
+	  forest[i][j]=age;
+      }
+      else
+	forest[i][j]=EMPTY; /* Nothing there. */
+    }
+  }
+  return;
+}
+
 
 /* This is the function that fills the periodic boundaries */
 void fillBoundary(int** forest, int rows, int cols){
