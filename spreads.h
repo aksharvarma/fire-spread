@@ -29,5 +29,7 @@ void spread_aging_trees(int** forest_old, int** forest_new, int rows, int cols, 
 /* Trees can spontaneously grow at any moment. */
 void spread_grow(int** old, int** new, int rows, int cols, long double pImmune, long double pLightning, long double pGrow, int neighbourhood_type);
 
-  
+void spread_wind(int **forest_old, int **forest_new, int rows, int cols, long double pImmune, long double pLightning, int neighbourhood_type, int wind_speed, int wind_direction); 
+
+
 #endif

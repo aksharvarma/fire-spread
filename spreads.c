@@ -26,8 +26,12 @@ void spread_burn_prob_neighbours(int** forest_old, int** forest_new, int rows, i
 /* The update function where the trees age slowly. */
 void spread_aging_trees(int** forest_old, int** forest_new, int rows, int cols, long double pImmune, long double pLightning, int neighbourhood_type);
 
+<<<<<<< Updated upstream
 /* Trees can spontaneously grow at any moment. */
 void spread_grow(int** old, int** new, int rows, int cols, long double pImmune, long double pLightning, long double pGrow, int neighbourhood_type);
+=======
+void spread_wind(int **forest_old, int **forest_new, int rows, int cols, long double pImmune, long double pLightning, int neighbourhood_type, int wind_speed, int wind_direction); 
+>>>>>>> Stashed changes
 
 
 /* Actual definitions start now. */
@@ -53,9 +57,17 @@ void spread(int** old, int** new, int rows, int cols, long double pImmune, long 
     printf("Trees age\n");
     spread_aging_trees(old,new,rows, cols, pImmune, pLightning, neighbourhood_type);
     break;
+<<<<<<< Updated upstream
   case GROW:	/* Trees spontaneously grow */
     printf("Trees spontaneously grow\n");
     spread_grow(old,new,rows, cols, pImmune, pLightning, pGrow, neighbourhood_type);
+=======
+  case WIND:
+  	printf("AAg\n");
+  	int wind_speed = 2;
+  	int wind_direction = EAST;
+  	spread_wind(old, new, rows, cols, pImmune, pLightning, neighbourhood_type, wind_speed, wind_direction); 
+>>>>>>> Stashed changes
     break;
   default:
     printf("Defaulting\n");
@@ -285,5 +297,52 @@ void spread_grow(int** old, int** new, int rows, int cols, long double pImmune, 
       }
     }
   }
+  return;
+}
+void spread_wind(int **old, int **new, int rows, int cols, long double pImmune, long double pLightning, int neighbourhood_type, int wind_speed, int wind_direction){
+	  int i,j;
+
+  /* Looping over all the cells */
+  for(i=1;i<=rows;i++)
+  {
+    for(j=1;j<=cols;j++)
+    {
+      if(old[i][j]==EMPTY)
+      { /* If empty, remain empty */
+				new[i][j]=EMPTY;
+      }
+      else if(old[i][j]==BURNING)
+      { /* If burning, burn down. */
+				new[i][j]=EMPTY;
+      }
+      else if(old[i][j]==TREE)
+      { /* if tree, */
+				if(do_neighbours_burn(old,i,j,neighbourhood_type))
+				{
+	  		/* and neigbours are burning */
+	  			if(U<pImmune)
+	  			{
+	    			new[i][j]=check_burning_wind(old,i,j,neighbourhood_type, wind_speed, wind_direction, pImmune, rows,cols);	/* Check if Tree is not burning */
+	  				if(new[i][j]==BURNING)
+	  					printf("Burnnnnnnnn!!!\n");
+	  			}
+	  			else
+	  			{
+	    			new[i][j]=BURNING;	/* else burn it. */
+	  			}
+				}
+			else
+			{
+	  		new[i][j]=check_burning_wind(old,i,j,neighbourhood_type, wind_speed, wind_direction, pImmune, rows,cols);	/* if neighbors aren't burning */
+				if(new[i][j]==BURNING)
+	  					printf("Burnnnnnnnn!!!\n");
+			}
+    }
+    else
+    {			/* If it's none of these, */
+			new[i][j]=ERROR;	/* there's something wrong. */
+    }
+  }
+	}
   return;
 }

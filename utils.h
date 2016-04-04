@@ -38,4 +38,6 @@ int do_neighbours_burn(int** forest, int row_index, int col_index, int neighbour
 /* This counts the number of burning neighbours */
 int count_burning_neighbours(int** forest, int row_index, int col_index, int neighbourhood_type);
 
+int check_burning_wind(int** forest, int row_index, int col_index, int neighbourhood_type, int wind_speed, int wind_direction, long double pImmune, int rows, int cols);
+
 #endif

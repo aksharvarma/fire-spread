@@ -5,6 +5,13 @@
 
 #define N 2  /* Log10 of the number of steps */
 
+
+/*The directions*/
+#define NORTH 1
+#define SOUTH -1
+#define WEST 2
+#define EAST -2
+
 /* This allows generationg of uniform random variables */
 #define U ((long double)rand()/RAND_MAX)
 
@@ -73,4 +80,5 @@
 #define GROW (5)
 
 
+#define WIND (10)
 #endif

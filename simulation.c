@@ -24,11 +24,11 @@ int main(){
   /* Currently the same but can be changed when required. */
   int rows=n, cols=n;
   /* Number of steps to run simulation for */
-  int steps=5;/* pow(10,N); */
+  int steps=2;/* pow(10,N); */
 
   /* The types of the neighbourhood and the fire spreading */
   int neighbourhood_type=VON_NEUMANN;
-  int spread_type=BURN_PROB_NEIGHBOURS;
+  int spread_type=WIND;
   
   
   /* The 3d matrix which stores all states of the forest */
@@ -51,11 +51,15 @@ int main(){
   }
   
   /* Initializing the forest */
-  initForest(forest[0], rows, cols, pTree, pBurning);
+  //initForest(forest[0], rows, cols, pTree, pBurning);
+  forest[0][1][1] = 2;
+  forest[0][1][2] = 1;
+  forest[0][1][3] = 1;
   print_forest(forest[0], rows, cols);
   printf("\n");
   file_print_forest(fptr,forest[0], rows, cols);
   fprintf(fptr, "\n");
+  
   
   /* Simulating for other steps */
   for(k=1;k<steps;k++){

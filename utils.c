@@ -38,8 +38,9 @@ int do_neighbours_burn(int** forest, int row_index, int col_index, int neighbour
 /* This counts the number of burning neighbours */
 int count_burning_neighbours(int** forest, int row_index, int col_index, int neighbourhood_type);
 
-
+int check_burning_wind(int** forest, int row_index, int col_index, int neighbourhood_type, int wind_speed, int wind_direction, long double pImmune, int rows, int cols);
 /* This merely prints the forest matrix */
+
 int** print_forest(int** forest, int rows, int cols ){
   int i, j;
 
@@ -253,4 +254,56 @@ int count_burning_neighbours(int** forest, int row_index, int col_index, int nei
   }
   return neighbors_on_fire;
 }
-
+int check_burning_wind(int** forest, int row_index, int col_index, int neighbourhood_type, int wind_speed, int wind_direction, long double pImmune,int rows, int cols)
+{
+	int i=row_index;
+  int j=col_index;
+  int neighbour_status = -5;
+	switch(wind_speed)
+	{
+		case 0:
+			return TREE;
+			break;
+		case 2:
+			
+			switch(wind_direction)
+			{
+				case SOUTH:
+					neighbour_status = forest[Nr(Nr(i))%rows][Nc(Nc(j))%cols];
+					break;
+				case NORTH:
+					neighbour_status = forest[Sr(Sr(i))%rows][Sc(Sc(j))%cols];
+					break;
+				case EAST:
+					neighbour_status = forest[Wr(Wr(i))%rows][Wc(Wc(j))%cols];
+					break;
+				case WEST:
+					neighbour_status = forest[Er(Er(i))%rows][Ec(Ec(j))%cols];
+					break;
+			}
+			if (pImmune<U && neighbour_status == BURNING)
+				return BURNING;
+		case 1:
+			neighbour_status = -5;
+			switch(wind_direction)
+			{
+				case SOUTH:
+					neighbour_status = forest[Nr(i)][Nc(j)];
+					break;
+				case NORTH:
+					neighbour_status = forest[Sr(i)][Sc(j)];
+					break;
+				case EAST:
+					neighbour_status = forest[Wr(i)][Wc(j)];
+					break;
+				case WEST:
+					neighbour_status = forest[Er(i)][Ec(j)];
+					break;
+			}
+			if (pImmune<U && neighbour_status == BURNING)
+				return BURNING;
+			else
+				return TREE;	
+	}
+	
+}
