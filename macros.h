@@ -70,5 +70,7 @@
 #define TWO_STEPS_TO_BURN (2)
 #define BURN_PROB_NEIGHBOURS (3)
 #define AGING_TREES (4)
+#define GROW (5)
+
 
 #endif

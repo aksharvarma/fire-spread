@@ -12,7 +12,7 @@
 #include"spreads.h"
 
 /* The function that decides the update function to choose */
-void spread(int** forest_old, int** forest_new, int rows, int cols, long double pImmune, long double pLightning, int spread_type, int neighbourhood_type);
+void spread(int** forest_old, int** forest_new, int rows, int cols, long double pImmune, long double pLightning, long double pGrow, int spread_type, int neighbourhood_type);
 
 /* The normal update function without any modifications. */
 void spread_normal(int** forest_old, int** forest_new, int rows, int cols, long double pImmune, long double pLightning, int neighbourhood_type);
@@ -26,12 +26,14 @@ void spread_burn_prob_neighbours(int** forest_old, int** forest_new, int rows, i
 /* The update function where the trees age slowly. */
 void spread_aging_trees(int** forest_old, int** forest_new, int rows, int cols, long double pImmune, long double pLightning, int neighbourhood_type);
 
+/* Trees can spontaneously grow at any moment. */
+void spread_grow(int** old, int** new, int rows, int cols, long double pImmune, long double pLightning, long double pGrow, int neighbourhood_type);
 
 
 /* Actual definitions start now. */
 
 /* This function selects which kind of update function to call. */
-void spread(int** old, int** new, int rows, int cols, long double pImmune, long double pLightning, int spread_type, int neighbourhood_type){
+void spread(int** old, int** new, int rows, int cols, long double pImmune, long double pLightning, long double pGrow, int spread_type, int neighbourhood_type){
 
   /* We swtich over "type" to select the spread function. */
   switch(spread_type){
@@ -50,6 +52,10 @@ void spread(int** old, int** new, int rows, int cols, long double pImmune, long 
   case AGING_TREES:	/* Trees age */
     printf("Trees age\n");
     spread_aging_trees(old,new,rows, cols, pImmune, pLightning, neighbourhood_type);
+    break;
+  case GROW:	/* Trees spontaneously grow */
+    printf("Trees spontaneously grow\n");
+    spread_grow(old,new,rows, cols, pImmune, pLightning, pGrow, neighbourhood_type);
     break;
   default:
     printf("Defaulting\n");
@@ -175,6 +181,7 @@ void spread_burn_prob_neighbours(int** old, int** new, int rows, int cols, long 
 }
 
 
+/* Here the trees age in each step. */
 void spread_aging_trees(int** old, int** new, int rows, int cols, long double pImmune, long double pLightning, int neighbourhood_type){
   int i,j;
   /* This is to tackle issues where the forest hasn't been 
@@ -243,4 +250,40 @@ void spread_aging_trees(int** old, int** new, int rows, int cols, long double pI
   }
   return;
 
+}
+
+
+
+/* Trees can spontaneously grow at any moment. */
+void spread_grow(int** old, int** new, int rows, int cols, long double pImmune, long double pLightning, long double pGrow, int neighbourhood_type){
+  int i,j;
+
+  /* Looping over all the cells */
+  for(i=1;i<=rows;i++){
+    for(j=1;j<=cols;j++){
+      if(old[i][j]==EMPTY){ /* If empty, remain empty */
+	if(U<pGrow)
+	  new[i][j]=TREE;
+	else
+	  new[i][j]=EMPTY;
+      }else if(old[i][j]==BURNING){ /* If burning, burn down. */
+	new[i][j]=EMPTY;
+      }else if(old[i][j]==TREE){ /* if tree, */
+	if(do_neighbours_burn(old,i,j,neighbourhood_type)){
+	  /* and neigbours are burning */
+	  if(U<pImmune){
+	    new[i][j]=TREE;	/* keep tree if immune */
+	  }
+	  else{
+	    new[i][j]=BURNING;	/* else burn it. */
+	  }
+	}else{
+	  new[i][j]=TREE;	/* if neighbors aren't burning */
+	}
+      }else{			/* If it's none of these, */
+	new[i][j]=ERROR;	/* there's something wrong. */
+      }
+    }
+  }
+  return;
 }
