@@ -183,13 +183,7 @@ void spread_aging_trees(int** old, int** new, int rows, int cols, long double pI
   */
   static int init_flag=1;
   /* This is to ensure that the next block only runs once. */
-  
-  printf("init_flag: %d\n", init_flag);
-  if(init_flag){
-    print_forest(old, rows, cols);
-    printf("\n");
-  }
-  
+    
   if(init_flag){
     for(i=1;i<=rows;i++){
       for(j=1;j<=cols;j++){
@@ -204,11 +198,6 @@ void spread_aging_trees(int** old, int** new, int rows, int cols, long double pI
 	}
       }
     }
-  }
-
-  if(init_flag){
-    print_forest(old, rows, cols);
-    printf("\n");
   }
   
   init_flag*=0;
