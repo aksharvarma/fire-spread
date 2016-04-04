@@ -178,21 +178,34 @@ int do_neighbours_burn(int** forest, int row_index, int col_index, int neighbour
   
   switch(neighbourhood_type){
   case VON_NEUMANN:
-    return (forest[Nr(i)][Nc(j)]==BURNING ||
-	    forest[Er(i)][Ec(j)]==BURNING ||
-	    forest[Wr(i)][Wc(j)]==BURNING ||
-	    forest[Sr(i)][Sc(j)]==BURNING
+    return ((forest[Nr(i)][Nc(j)]>=BURNING &&
+	     forest[Nr(i)][Nc(j)]<=OLD_BURNING) ||
+	    (forest[Er(i)][Ec(j)]>=BURNING &&
+	     forest[Er(i)][Ec(j)]<=OLD_BURNING) ||
+	    (forest[Wr(i)][Wc(j)]>=BURNING &&
+	     forest[Wr(i)][Wc(j)]<=OLD_BURNING) ||
+	    (forest[Sr(i)][Sc(j)]>=BURNING &&
+	     forest[Sr(i)][Sc(j)]<=OLD_BURNING)
 	    );
   case MOORE:
-    return (forest[Nr(i)][Nc(j)]==BURNING ||
-	    forest[Er(i)][Ec(j)]==BURNING ||
-	    forest[Wr(i)][Wc(j)]==BURNING ||
-	    forest[Sr(i)][Sc(j)]==BURNING ||
+    return ((forest[Nr(i)][Nc(j)]>=BURNING &&
+	     forest[Nr(i)][Nc(j)]<=OLD_BURNING) ||
+	    (forest[Er(i)][Ec(j)]>=BURNING &&
+	     forest[Er(i)][Ec(j)]<=OLD_BURNING) ||
+	    (forest[Wr(i)][Wc(j)]>=BURNING &&
+	     forest[Wr(i)][Wc(j)]<=OLD_BURNING) ||
+	    (forest[Sr(i)][Sc(j)]>=BURNING &&
+	     forest[Sr(i)][Sc(j)]<=OLD_BURNING)
+	    ||
 	    //Diagonals
-	    forest[NEr(i)][NEc(j)]==BURNING ||
-	    forest[SEr(i)][SEc(j)]==BURNING ||
-	    forest[NWr(i)][NWc(j)]==BURNING ||
-	    forest[SWr(i)][SWc(j)]==BURNING 
+	    (forest[NEr(i)][NEc(j)]>=BURNING &&
+	     forest[NEr(i)][NEc(j)]<=OLD_BURNING) ||
+	    (forest[SEr(i)][SEc(j)]>=BURNING &&
+	     forest[SEr(i)][SEc(j)]<=OLD_BURNING) ||
+	    (forest[NWr(i)][NWc(j)]>=BURNING &&
+	     forest[NWr(i)][NWc(j)]<=OLD_BURNING) ||
+	    (forest[SWr(i)][SWc(j)]>=BURNING &&
+	     forest[SWr(i)][SWc(j)]<=OLD_BURNING)
 	    );
   default:
     return 0;
@@ -207,32 +220,32 @@ int count_burning_neighbours(int** forest, int row_index, int col_index, int nei
 
   switch(neighbourhood_type){
   case VON_NEUMANN:
-    if(forest[Nr(i)][Nc(j)]==BURNING)
+    if(forest[Nr(i)][Nc(j)]>=BURNING && forest[Nr(i)][Nc(j)]<=OLD_BURNING)
       neighbors_on_fire++;
-    if(forest[Er(i)][Ec(j)]==BURNING)
+    if(forest[Er(i)][Ec(j)]>=BURNING && forest[Er(i)][Ec(j)]<=OLD_BURNING)
       neighbors_on_fire++;
-    if(forest[Wr(i)][Wc(j)]==BURNING)
+    if(forest[Wr(i)][Wc(j)]>=BURNING && forest[Wr(i)][Wc(j)]<=OLD_BURNING)
       neighbors_on_fire++;
-    if(forest[Sr(i)][Sc(j)]==BURNING)
+    if(forest[Sr(i)][Sc(j)]>=BURNING && forest[Sr(i)][Sc(j)]<=OLD_BURNING)
       neighbors_on_fire++;
     break;
   case MOORE:
-    if(forest[Nr(i)][Nc(j)]==BURNING)
+    if(forest[Nr(i)][Nc(j)]>=BURNING && forest[Nr(i)][Nc(j)]<=OLD_BURNING)
       neighbors_on_fire++;
-    if(forest[Er(i)][Ec(j)]==BURNING)
+    if(forest[Er(i)][Ec(j)]>=BURNING && forest[Er(i)][Ec(j)]<=OLD_BURNING)
       neighbors_on_fire++;
-    if(forest[Wr(i)][Wc(j)]==BURNING)
+    if(forest[Wr(i)][Wc(j)]>=BURNING && forest[Wr(i)][Wc(j)]<=OLD_BURNING)
       neighbors_on_fire++;
-    if(forest[Sr(i)][Sc(j)]==BURNING)
+    if(forest[Sr(i)][Sc(j)]>=BURNING && forest[Sr(i)][Sc(j)]<=OLD_BURNING)
       neighbors_on_fire++;
     /* Diagonals */
-    if(forest[NEr(i)][NEc(j)]==BURNING)
+    if(forest[NEr(i)][NEc(j)]>=BURNING && forest[NEr(i)][NEc(j)]<=OLD_BURNING)
       neighbors_on_fire++;
-    if(forest[SEr(i)][SEc(j)]==BURNING)
+    if(forest[SEr(i)][SEc(j)]>=BURNING && forest[SEr(i)][SEc(j)]<=OLD_BURNING)
       neighbors_on_fire++;
-    if(forest[NWr(i)][NWc(j)]==BURNING)
+    if(forest[NWr(i)][NWc(j)]>=BURNING && forest[NWr(i)][NWc(j)]<=OLD_BURNING)
       neighbors_on_fire++;
-    if(forest[SWr(i)][SWc(j)]==BURNING)
+    if(forest[SWr(i)][SWc(j)]>=BURNING && forest[SWr(i)][SWc(j)]<=OLD_BURNING)
       neighbors_on_fire++;
     break;
   default:

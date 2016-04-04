@@ -11,7 +11,7 @@
 /* Global Probability variables */
 /* long double pTree=0.8, pBurning=0.005, pLightning=0.00001, pImmune=0.25; */
 /* Values used for quick testing */
-long double pTree=0.8, pBurning=0.5, pLightning=0.01, pImmune=0.25, pGrow=0.1;
+long double pTree=0.8, pBurning=0.7, pLightning=0.01, pImmune=0.25, pGrow=0.1;
 
 int main(){
   printf("Empty:%d\nTree:%d\nBurning:%d\nStill Burning:%d\n\n",
@@ -24,11 +24,11 @@ int main(){
   /* Currently the same but can be changed when required. */
   int rows=n, cols=n;
   /* Number of steps to run simulation for */
-  int steps=3;/* pow(10,N); */
+  int steps=5;/* pow(10,N); */
 
   /* The types of the neighbourhood and the fire spreading */
   int neighbourhood_type=VON_NEUMANN;
-  int spread_type=GROW;
+  int spread_type=BURN_PROB_NEIGHBOURS;
   
   
   /* The 3d matrix which stores all states of the forest */

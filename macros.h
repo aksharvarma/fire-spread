@@ -44,13 +44,13 @@
 /* Kinds of cells */
 #define ERROR (-1)
 #define EMPTY (0)
-#define TREE (1)
-#define BURNING (2)
+#define TREE (10)
+#define BURNING (20)
 #define STILL_BURNING (3)
 
 #define AGE_IT (1)
 /* Kinds of trees (for exercise 6) */
-#define BABY (10)
+#define BABY (11)
 #define YOUNG (BABY+AGE_IT)
 #define MIDDLE (YOUNG+AGE_IT)
 #define OLD (MIDDLE+AGE_IT)
