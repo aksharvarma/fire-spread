@@ -331,14 +331,15 @@ void findingValues(int ***forest, int ncols, int nrows, int time_instants) {
 									break;
 					case 1: trees[i]++;
 									break;
-					case 2: burning[i]++;
+					case 2: 
+							burning[i]++;
 									break;
 				}
 			}
 		}
 	}	
-	for(i = 0; i<time_instants; i++)
+	for(i = 1; i<=time_instants; i++)
 	{
-		printf("%d:%d %d %d\n", i, empty[i], burning[i], trees[i]);	
+		printf("%d %d %d %d\n", i, empty[i-1], burning[i-1], trees[i-1]);	
 	}
 }

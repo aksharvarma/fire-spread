@@ -55,7 +55,7 @@
 #define EMPTY (0)
 #define TREE (10)
 #define BURNING (20)
-#define STILL_BURNING (3)
+#define STILL_BURNING (29)
 
 #define AGE_IT (1)
 /* Kinds of trees (for exercise 6) */
