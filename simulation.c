@@ -166,5 +166,6 @@ int main(){
   }
   findingValues(forest, cols, rows, steps);
   fclose(fptr);
+
   return 0;
 }
