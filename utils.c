@@ -363,7 +363,7 @@ void generateMatrix(int ***forest, int rows, int cols, int iterations, int simul
   	}	
 	for(i = 0; i<simulations; i++)
 	{
-		printf("%f\n", pBurning);
+		printf("%d\n", i);
 		initForest(forest[0], rows, cols, pTree, pBurning);
 		count = 0;
 /*		for(k = 1; k<=rows; k++)

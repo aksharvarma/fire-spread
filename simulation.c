@@ -20,7 +20,8 @@ void on_trackbar( int i, void* b)
 /* Global Probability variables */
 /* long double pTree=0.8, pBurning=0.005, pLightning=0.00001, pImmune=0.25; */
 /* Values used for quick testing */
-long double pTree=0.8, pBurning=0.5, pLightning=0.01, pImmune=0.4, pGrow=0.1;
+long double pTree=0.8, pBurning=0.005, pLightning=0.01, pImmune=0.25, pGrow=0.1;
+
 
 int main(){
 
@@ -30,11 +31,11 @@ int main(){
   /* Seed the random number. Always!!!! */
   srand(time(NULL));
   /* Iteration variables and n x n matrix. */
-  int i, j, k, n=15;/* 100; */
+  int i, j, k, n=50;/* 100; */
   /* Currently the same but can be changed when required. */
   int rows=n, cols=n;
   /* Number of steps to run simulation for */
-  int steps=10;/* pow(10,N); */
+  int steps=100;/* pow(10,N); */
 
   /* The types of the neighbourhood and the fire spreading */
   int neighbourhood_type=MOORE;
@@ -88,7 +89,7 @@ int main(){
 
   CvScalar s;
   /* Simulating for other steps */
-	generateMatrix(forest, rows, cols,  steps, 500,  pTree, pBurning, pGrow,  pImmune, pLightning, spread_type, neighbourhood_type);
+	generateMatrix(forest, rows, cols,  steps, 1000,  pTree, pBurning, pGrow,  pImmune, pLightning, spread_type, neighbourhood_type);
   for(k=1;k<steps;k++){
 
     pGrow=(float)(cvGetTrackbarPos("pGrow", "Fire_spread")/10.0);

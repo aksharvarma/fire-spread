@@ -80,7 +80,7 @@ void spread(int** old, int** new, int rows, int cols, long double pImmune, long 
     spread_damp(old,new,rows, cols, pImmune, pLightning, neighbourhood_type);
     break;
   case REALITY:	/* A section of the forest is damp. */
-    printf("The most realistic one\n");
+    //printf("The most realistic one\n");
     spread_reality(old,new,rows, cols, pImmune, pLightning, pGrow, neighbourhood_type, wind_speed, wind_direction);
     break;
   default:
