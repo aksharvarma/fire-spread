@@ -8,7 +8,8 @@
 #include<limits.h>
 #include"utils.h"
 #include"macros.h"
-
+#include "cv.h"
+#include "highgui.h"
 /* Function declarations */
 
 /* A helper function that prints the forest at a particular time */

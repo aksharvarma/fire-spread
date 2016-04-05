@@ -6,7 +6,8 @@
 #include<math.h>
 #include<time.h>
 #include<limits.h>
-
+#include "cv.h"
+#include "highgui.h"
 
 #define N 2  /* Log10 of the number of steps */
 
