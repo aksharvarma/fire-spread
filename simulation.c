@@ -11,7 +11,7 @@
 /* Global Probability variables */
 /* long double pTree=0.8, pBurning=0.005, pLightning=0.00001, pImmune=0.25; */
 /* Values used for quick testing */
-long double pTree=0.8, pBurning=0.7, pLightning=0.01, pImmune=0.25, pGrow=0.1;
+long double pTree=0.8, pBurning=0.7, pLightning=0.01, pImmune=0.1, pGrow=0.1;
 
 int main(){
   printf("Empty:%d\nTree:%d\nBurning:%d\nStill Burning:%d\n\n",
@@ -28,7 +28,7 @@ int main(){
 
   /* The types of the neighbourhood and the fire spreading */
   int neighbourhood_type=VON_NEUMANN;
-  int spread_type=WIND;
+  int spread_type=GROW;
   
   
   /* The 3d matrix which stores all states of the forest */
@@ -51,10 +51,10 @@ int main(){
   }
   
   /* Initializing the forest */
-  //initForest(forest[0], rows, cols, pTree, pBurning);
-  forest[0][1][1] = 2;
-  forest[0][1][2] = 1;
-  forest[0][1][3] = 1;
+  initForest(forest[0], rows, cols, pTree, pBurning);
+  /* forest[0][1][1] = 2; */
+  /* forest[0][1][2] = 1; */
+  /* forest[0][1][3] = 1; */
   print_forest(forest[0], rows, cols);
   printf("\n");
   file_print_forest(fptr,forest[0], rows, cols);
