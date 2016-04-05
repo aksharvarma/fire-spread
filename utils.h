@@ -14,6 +14,10 @@
 
 void findingValues(int ***forest, int ncols, int nrows, int time_instants);
 
+
+void generateMatrix(int ***forest, int rows, int cols, int iterations, int simulations, float pTree, float pBurning, float pGrow, float pImmune, float pLightning, int spread_type, int neighbourhood_type);
+
+
 /* A helper function that prints the forest at a particular time */
 int** print_forest(int** forest, int rows, int cols );
 
