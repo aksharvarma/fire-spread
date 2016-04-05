@@ -80,7 +80,7 @@
 #define BURN_PROB_NEIGHBOURS (3)
 #define AGING_TREES (4)
 #define GROW (5)
+#define WIND (6)
+#define DAMP (7)
 
-
-#define WIND (10)
 #endif

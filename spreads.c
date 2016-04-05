@@ -32,13 +32,17 @@ void spread_aging_trees(int** forest_old, int** forest_new, int rows, int cols, 
 /* Trees can spontaneously grow at any moment. */
 void spread_grow(int** old, int** new, int rows, int cols, long double pImmune, long double pLightning, long double pGrow, int neighbourhood_type);
 
+/* There is wind. */
 void spread_wind(int **forest_old, int **forest_new, int rows, int cols, long double pImmune, long double pLightning, int neighbourhood_type, int wind_speed, int wind_direction); 
 
+/* A section of the forest is damp. */
+void spread_damp(int **forest_old, int **forest_new, int rows, int cols, long double pImmune, long double pLightning, int neighbourhood_type);
 
 
-	/* Actual definitions start now. */
 
-	/* This function selects which kind of update function to call. */
+/* Actual definitions start now. */
+
+/* This function selects which kind of update function to call. */
 void spread(int** old, int** new, int rows, int cols, long double pImmune, long double pLightning, long double pGrow, int spread_type, int neighbourhood_type){
 
   /* We swtich over "type" to select the spread function. */
@@ -63,12 +67,16 @@ void spread(int** old, int** new, int rows, int cols, long double pImmune, long 
     printf("Trees spontaneously grow\n");
     spread_grow(old,new,rows, cols, pImmune, pLightning, pGrow, neighbourhood_type);
     break;
-  case WIND:
+  case WIND:			/* There is wind. */
     printf("AAg\n");
     int wind_speed = 2;
     int wind_direction = EAST;
     spread_wind(old, new, rows, cols, pImmune, pLightning, neighbourhood_type, wind_speed, wind_direction); 
-	      break;
+    break;
+  case DAMP:	/* A section of the forest is damp. */
+    printf("A section of the forest is damp\n");
+    spread_damp(old,new,rows, cols, pImmune, pLightning, neighbourhood_type);
+    break;
   default:
     printf("Defaulting\n");
     spread_normal(old,new,rows, cols, pImmune, pLightning, neighbourhood_type);
@@ -315,7 +323,6 @@ void spread_wind(int **old, int **new, int rows, int cols, long double pImmune, 
 
   pLightning=0;
   neighbourhood_type=VON_NEUMANN;
-  
   /* Looping over all the cells */
   for(i=1;i<=rows;i++){
     for(j=1;j<=cols;j++){
@@ -349,4 +356,43 @@ void spread_wind(int **old, int **new, int rows, int cols, long double pImmune, 
     }
   }
   return;
+}
+
+
+
+void spread_damp(int **old, int **new, int rows, int cols, long double pImmune, long double pLightning, int neighbourhood_type){
+  int i,j;
+  double pImmune_damp = (1-pImmune)/2+pImmune;
+  for (i=1;i<=rows;i++){
+    for(j=1;j<=cols;j++){
+      if(old[i][j]==EMPTY){ /* If empty, remain empty */
+	new[i][j]=EMPTY;
+      }
+      else if(old[i][j]==BURNING){ /* If burning, burn down. */
+	new[i][j]=EMPTY;
+      }
+      else if(old[i][j]==TREE){ /* if tree, */
+	if(i>rows/2&&j>cols/2)
+	  pImmune = pImmune_damp;
+	if(do_neighbours_burn(old,i,j,neighbourhood_type)){
+	  /* and neigbours are burning */
+	  if(U<pImmune){
+	    new[i][j]=TREE;    /* keep tree if immune */
+	  }
+	  else{
+	    new[i][j]=BURNING;    /* else burn it. */
+	  }
+	}
+	else if(U<pLightning*(1-pImmune)){
+	  new[i][j]=BURNING;
+	}else {
+	  new[i][j]=TREE;/* if neighbors aren't burning */
+	}
+      }
+      else{            /* If it's none of these, */
+	new[i][j]=ERROR;    /* there's something wrong. */
+      }
+
+    }
+  }
 }
