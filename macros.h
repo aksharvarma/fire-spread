@@ -1,4 +1,6 @@
 /* This defines all the macros that are used in all the other codes */
+#include "cv.h"
+#include "highgui.h"
 
 #ifndef MACROS_H
 #define MACROS_H

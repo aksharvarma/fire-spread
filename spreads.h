@@ -9,6 +9,8 @@
 #include"macros.h"
 #include"utils.h"
 #include"spreads.h"
+#include "cv.h"
+#include "highgui.h"
 
 /* The function that decides the update function to choose */
 void spread(int** forest_old, int** forest_new, int rows, int cols, long double pImmune, long double pLightning, long double pGrow, int spread_type, int neighbourhood_type);
