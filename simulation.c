@@ -34,7 +34,7 @@ int main(){
   /* Currently the same but can be changed when required. */
   int rows=n, cols=n;
   /* Number of steps to run simulation for */
-  int steps=50;/* pow(10,N); */
+  int steps=10;/* pow(10,N); */
 
   /* The types of the neighbourhood and the fire spreading */
   int neighbourhood_type=MOORE;
