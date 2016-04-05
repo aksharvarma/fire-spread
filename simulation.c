@@ -20,7 +20,7 @@ void on_trackbar( int i, void* b)
 /* Global Probability variables */
 /* long double pTree=0.8, pBurning=0.005, pLightning=0.00001, pImmune=0.25; */
 /* Values used for quick testing */
-long double pTree=0.8, pBurning=0.4, pLightning=0.01, pImmune=0.1, pGrow=0.1;
+long double pTree=0.8, pBurning=0.4, pLightning=0.01, pImmune=0.4, pGrow=0.1;
 
 int main(){
   printf("Empty:%d\nTree:%d\nBurning:%d\nStill Burning:%d\n\n",
@@ -37,7 +37,7 @@ int main(){
 
   /* The types of the neighbourhood and the fire spreading */
   int neighbourhood_type=VON_NEUMANN;
-  int spread_type=NORMAL;
+  int spread_type=WIND;
   
   
   /* The 3d matrix which stores all states of the forest */

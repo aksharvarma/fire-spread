@@ -314,6 +314,7 @@ void spread_wind(int **old, int **new, int rows, int cols, long double pImmune, 
   int i,j;
 
   pLightning=0;
+  neighbourhood_type=VON_NEUMANN;
   
   /* Looping over all the cells */
   for(i=1;i<=rows;i++){
@@ -340,13 +341,6 @@ void spread_wind(int **old, int **new, int rows, int cols, long double pImmune, 
 	  new[i][j]=check_burning_wind(old,i,j,neighbourhood_type, wind_speed, wind_direction, pImmune, rows,cols);	/* if neighbors aren't burning */
 	  if(new[i][j]==BURNING)
 	    printf("Burnnnnnnnn!!!\n");
-	}
-	
-	/* The lightning clause */
-	if(U<pLightning*(1-pImmune)){
-	  new[i][j]=BURNING;
-	}else {
-	  new[i][j]=TREE;
 	}
       }
       else{			/* If it's none of these, */
