@@ -394,7 +394,7 @@ void generateMatrix(int ***forest, int rows, int cols, int iterations, int simul
 			fprintf(fptr,"%f ",count/(rows*cols));
 		}
 		
-		fprintf("\n");
+		fprintf(fptr, "\n");
 	}
 		
 	fclose(fptr);
