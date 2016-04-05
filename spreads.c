@@ -320,7 +320,29 @@ void spread_grow(int** old, int** new, int rows, int cols, long double pImmune, 
 }
 void spread_wind(int **old, int **new, int rows, int cols, long double pImmune, long double pLightning, int neighbourhood_type, int wind_speed, int wind_direction){
   int i,j;
+	
+	//Changing wind speeds and directions.
+	float windProb = 0.10;
+	if (U<windProb){
+		float x = U;
+		if(U<0.25)
+			wind_direction = EAST;
+		else if(U<0.50)
+			wind_direction = NORTH;
+		else if(U<0.75)
+			wind_direction = SOUTH;
+		else
+			wind_direction = WEST;
 
+		x = U;
+		if(x < 0.33)
+			wind_speed = 0;
+		else if( x < 0.66)
+			wind_speed = 1;
+		else
+			wind_speed = 2;
+	}	
+	
   neighbourhood_type = VON_NEUMANN;
   pLightning = 0;
   /* Looping over all the cells */
