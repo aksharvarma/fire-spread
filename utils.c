@@ -345,7 +345,7 @@ void findingValues(int ***forest, int ncols, int nrows, int time_instants) {
 	for(i = 1; i<=time_instants; i++)
 	{
 		printf("%d %d %d %d\n", i, empty[i-1], burning[i-1], trees[i-1]);
-		fprintf(fptr,	"%d %d %d %d\n", i, empty[i-1], burning[i-1], trees[i-1]);
+		fprintf(fptr,	"%d %.2f %.2f %.2f\n", i, empty[i-1]/(ncols*nrows), burning[i-1]/(ncols*nrows), trees[i-1]/(ncols*nrows));
 	}
 	fclose(fptr);
 }
