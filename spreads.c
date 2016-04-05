@@ -323,6 +323,7 @@ void spread_wind(int **old, int **new, int rows, int cols, long double pImmune, 
 
   pLightning=0;
   neighbourhood_type=VON_NEUMANN;
+
   /* Looping over all the cells */
   for(i=1;i<=rows;i++){
     for(j=1;j<=cols;j++){
