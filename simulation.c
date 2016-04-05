@@ -38,7 +38,7 @@ int main(){
 
   /* The types of the neighbourhood and the fire spreading */
   int neighbourhood_type=MOORE;
-  int spread_type=DAMP;
+  int spread_type=REALITY;
   
   
   /* The 3d matrix which stores all states of the forest */
@@ -63,9 +63,9 @@ int main(){
   /* Initializing the forest */
   initForest(forest[0], rows, cols, pTree, pBurning);
   //initForest(forest[0], rows, cols, pTree, pBurning);
-  forest[0][1][1] = 20;
-  forest[0][1][2] = 10;
-  forest[0][1][3] = 10;
+  /* forest[0][1][1] = 20; */
+  /* forest[0][1][2] = 10; */
+  /* forest[0][1][3] = 10; */
   print_forest(forest[0], rows, cols);
   printf("\n");
   file_print_forest(fptr,forest[0], rows, cols);

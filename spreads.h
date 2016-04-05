@@ -38,4 +38,8 @@ void spread_wind(int **forest_old, int **forest_new, int rows, int cols, long do
 /* A section of the forest is damp. */
 void spread_damp(int **forest_old, int **forest_new, int rows, int cols, long double pImmune, long double pLightning, int neighbourhood_type);
 
+/* It just got real. */
+void spread_reality(int** old, int** new, int rows, int cols, long double pImmune, long double pLightning, long double pGrow, int neighbourhood_type, int wind_speed, int wind_direction);
+
+
 #endif

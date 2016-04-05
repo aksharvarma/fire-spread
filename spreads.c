@@ -38,6 +38,8 @@ void spread_wind(int **forest_old, int **forest_new, int rows, int cols, long do
 /* A section of the forest is damp. */
 void spread_damp(int **forest_old, int **forest_new, int rows, int cols, long double pImmune, long double pLightning, int neighbourhood_type);
 
+/* It just got real. */
+void spread_reality(int** old, int** new, int rows, int cols, long double pImmune, long double pLightning, long double pGrow, int neighbourhood_type, int wind_speed, int wind_direction);
 
 
 /* Actual definitions start now. */
@@ -76,6 +78,10 @@ void spread(int** old, int** new, int rows, int cols, long double pImmune, long 
   case DAMP:	/* A section of the forest is damp. */
     printf("A section of the forest is damp\n");
     spread_damp(old,new,rows, cols, pImmune, pLightning, neighbourhood_type);
+    break;
+  case REALITY:	/* A section of the forest is damp. */
+    printf("The most realistic one\n");
+    spread_reality(old,new,rows, cols, pImmune, pLightning, pGrow, neighbourhood_type, wind_speed, wind_direction);
     break;
   default:
     printf("Defaulting\n");
@@ -250,9 +256,11 @@ void spread_aging_trees(int** old, int** new, int rows, int cols, long double pI
 	case BABY_BURNING:
 	case OLD_BURNING:
 	  new[i][j]=EMPTY;
+	  break;
 	case YOUNG_BURNING:
 	case MIDDLE_BURNING:
 	  new[i][j]=old[i][j]+AGE_IT;
+	  break;
 	}
 	
       }else if(old[i][j]>=BABY &&
@@ -321,27 +329,27 @@ void spread_grow(int** old, int** new, int rows, int cols, long double pImmune, 
 void spread_wind(int **old, int **new, int rows, int cols, long double pImmune, long double pLightning, int neighbourhood_type, int wind_speed, int wind_direction){
   int i,j;
 	
-	//Changing wind speeds and directions.
-	float windProb = 0.10;
-	if (U<windProb){
-		float x = U;
-		if(U<0.25)
-			wind_direction = EAST;
-		else if(U<0.50)
-			wind_direction = NORTH;
-		else if(U<0.75)
-			wind_direction = SOUTH;
-		else
-			wind_direction = WEST;
+  //Changing wind speeds and directions.
+  float windProb = 0.10;
+  if (U<windProb){
+    float x = U;
+    if(x<0.25)
+      wind_direction = EAST;
+    else if(x<0.50)
+      wind_direction = NORTH;
+    else if(x<0.75)
+      wind_direction = SOUTH;
+    else
+      wind_direction = WEST;
 
-		x = U;
-		if(x < 0.33)
-			wind_speed = 0;
-		else if( x < 0.66)
-			wind_speed = 1;
-		else
-			wind_speed = 2;
-	}	
+    x = U;
+    if(x < 0.33)
+      wind_speed = 0;
+    else if( x < 0.66)
+      wind_speed = 1;
+    else
+      wind_speed = 2;
+  }	
 	
   neighbourhood_type = VON_NEUMANN;
   pLightning = 0;
@@ -384,7 +392,8 @@ void spread_wind(int **old, int **new, int rows, int cols, long double pImmune, 
 
 void spread_damp(int **old, int **new, int rows, int cols, long double pImmune, long double pLightning, int neighbourhood_type){
   int i,j;
-  double pImmune_damp = (1-pImmune)/2+pImmune;
+  long double pImmune_damp = (1-pImmune)/2+pImmune;
+  long double pImmune_used;
   for (i=1;i<=rows;i++){
     for(j=1;j<=cols;j++){
       if(old[i][j]==EMPTY){ /* If empty, remain empty */
@@ -395,17 +404,19 @@ void spread_damp(int **old, int **new, int rows, int cols, long double pImmune, 
       }
       else if(old[i][j]==TREE){ /* if tree, */
 	if(i>rows/2&&j>cols/2)
-	  pImmune = pImmune_damp;
+	  pImmune_used = pImmune_damp;
+	else
+	  pImmune_used = pImmune;
 	if(do_neighbours_burn(old,i,j,neighbourhood_type)){
 	  /* and neigbours are burning */
-	  if(U<pImmune){
+	  if(U<pImmune_used){
 	    new[i][j]=TREE;    /* keep tree if immune */
 	  }
 	  else{
 	    new[i][j]=BURNING;    /* else burn it. */
 	  }
 	}
-	else if(U<pLightning*(1-pImmune)){
+	else if(U<pLightning*(1-pImmune_used)){
 	  new[i][j]=BURNING;
 	}else {
 	  new[i][j]=TREE;/* if neighbors aren't burning */
@@ -417,4 +428,140 @@ void spread_damp(int **old, int **new, int rows, int cols, long double pImmune, 
 
     }
   }
+}
+
+
+
+
+/* It just got real. */
+void spread_reality(int** old, int** new, int rows, int cols, long double pImmune, long double pLightning, long double pGrow, int neighbourhood_type, int wind_speed, int wind_direction){
+  int i,j;
+  /* This is to tackle issues where the forest hasn't been 
+     initialized with ages but the aging_trees spread model
+     has been asked for.
+  */
+  static int init_flag=1;
+  /* This is to ensure that the next block only runs once. */
+    
+  if(init_flag){
+    for(i=1;i<=rows;i++){
+      for(j=1;j<=cols;j++){
+	if(old[i][j]==TREE){
+	  old[i][j]=random_age();
+	}else if(old[i][j]==BURNING){
+	  old[i][j]=random_age()+BURNING_INCREMENT;
+	}else if(old[i][j]==EMPTY){
+	  old[i][j]=EMPTY;
+	}else{
+	  old[i][j]=ERROR;
+	}
+      }
+    }
+  }
+  
+  init_flag*=0;
+
+  //Changing wind speeds and directions.
+  float windProb = 0.10;
+  if (U<windProb){
+    float x = U;
+    if(x<0.25)
+      wind_direction = EAST;
+    else if(x<0.50)
+      wind_direction = NORTH;
+    else if(x<0.75)
+      wind_direction = SOUTH;
+    else
+      wind_direction = WEST;
+
+    x = U;
+    if(x < 0.33)
+      wind_speed = 0;
+    else if( x < 0.66)
+      wind_speed = 1;
+    else
+      wind_speed = 2;
+  }
+
+
+  
+  long double pGrow_burnt=pGrow+ (1-pGrow)/2;
+  long double pGrow_used=pGrow;
+  long double pImmune_damp = (1-pImmune)/2+pImmune;
+  long double pImmune_used=pImmune;
+
+  /* Looping over all the cells */
+  for(i=1;i<=rows;i++){
+    for(j=1;j<=cols;j++){
+      if(old[i][j]==EMPTY ||
+	 old[i][j]==EMPTY_TREE ||
+	 old[i][j]==EMPTY_BURNING){
+	/* If empty/tree died/tree burned down --> empty */
+
+	if(do_neighbours_burn(old,i,j,neighbourhood_type))
+	  pGrow_used=0;
+	else if(old[i][j]==EMPTY_BURNING)
+	  pGrow_used=pGrow_burnt;
+	else
+	  pGrow_used=pGrow;
+	
+	if(U<pGrow_used)
+	  new[i][j]=TREE+random_age();
+	else
+	  new[i][j]=EMPTY;
+	
+	}else if(old[i][j]>=BABY_BURNING &&
+		 old[i][j]<=OLD_BURNING){ /* If burning, age tree. */
+	  switch(old[i][j]){
+	  case BABY_BURNING:
+	  case OLD_BURNING:
+	    new[i][j]=EMPTY_BURNING;
+	    break;
+	  case YOUNG_BURNING:
+	  case MIDDLE_BURNING:
+	    new[i][j]=old[i][j]+AGE_IT;
+	    break;
+	  }
+	
+	}else if(old[i][j]>=BABY &&
+		 old[i][j]<=OLD){ /* if tree, */
+	
+	  if(i>rows/2&&j>cols/2)
+	    pImmune_used = pImmune_damp;
+	  else
+	    pImmune_used = pImmune;
+
+		
+	  new[i][j]=old[i][j]+AGE_IT; /* age the tree */
+	  if(do_neighbours_burn(old,i,j,neighbourhood_type)){
+	    /* and neigbours are burning */
+	    if(U<pImmune){
+	      if(check_burning_wind(old,i,j,neighbourhood_type, wind_speed, wind_direction, pImmune, rows,cols)==TREE)
+		new[i][j]=new[i][j]; /* Keep as tree */
+	      else
+		new[i][j]=new[i][j]+BURNING_INCREMENT;
+	    }
+	    else{
+	      new[i][j]=new[i][j]+BURNING_INCREMENT;
+	      /* else burn it. */
+	    }
+	  }else{
+	    if(check_burning_wind(old,i,j,neighbourhood_type, wind_speed, wind_direction, pImmune, rows,cols)==TREE)
+		new[i][j]=new[i][j];  /* if neighbors aren't burning */
+	      else
+		new[i][j]=new[i][j]+BURNING_INCREMENT;
+	  }
+
+	  if(U<pLightning*(1-pImmune) && new[i][j]>=BABY && new[i][j]<=OLD){
+	    new[i][j]=new[i][j]+BURNING_INCREMENT;
+	  }else {
+	    new[i][j]=new[i][j];/* if neighbors aren't burning */
+	  }
+      }else{			/* If it's none of these, */
+	  new[i][j]=ERROR;	/* there's something wrong. */
+      }
+    }
+  }
+  
+  return;
 }

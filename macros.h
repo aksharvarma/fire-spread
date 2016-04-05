@@ -82,5 +82,6 @@
 #define GROW (5)
 #define WIND (6)
 #define DAMP (7)
+#define REALITY (8)
 
 #endif
