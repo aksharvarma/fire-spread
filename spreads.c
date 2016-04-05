@@ -313,8 +313,8 @@ void spread_grow(int** old, int** new, int rows, int cols, long double pImmune, 
 void spread_wind(int **old, int **new, int rows, int cols, long double pImmune, long double pLightning, int neighbourhood_type, int wind_speed, int wind_direction){
   int i,j;
 
-  pLightning=0;
   
+  pLightning = 0;
   /* Looping over all the cells */
   for(i=1;i<=rows;i++){
     for(j=1;j<=cols;j++){

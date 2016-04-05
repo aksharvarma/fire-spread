@@ -12,6 +12,9 @@
 #include "highgui.h"
 /* Function declarations */
 
+void findingValues(int ***forest, int ncols, int nrows, int time_instants);
+
+
 /* A helper function that prints the forest at a particular time */
 int** print_forest(int** forest, int rows, int cols );
 
@@ -307,4 +310,35 @@ int check_burning_wind(int** forest, int row_index, int col_index, int neighbour
 				return TREE;	
 	}
 	
+}
+
+
+void findingValues(int ***forest, int ncols, int nrows, int time_instants) {
+
+  int *burning = (int *)calloc(time_instants,sizeof(int));
+	int *empty = (int *)calloc(time_instants,sizeof(int));	
+	int *trees = (int *)calloc(time_instants,sizeof(int));
+	int i,j,k;
+	for(i = 0; i<time_instants;i++)
+	{
+		for(j=1; j<=nrows; j++)
+		{
+			for(k=1;k<=ncols; k++)
+			{
+				switch(forest[i][j][k]/10)
+				{
+					case 0: empty[i]++;
+									break;
+					case 1: trees[i]++;
+									break;
+					case 2: burning[i]++;
+									break;
+				}
+			}
+		}
+	}	
+	for(i = 0; i<time_instants; i++)
+	{
+		printf("%d:%d %d %d\n", i, empty[i], burning[i], trees[i]);	
+	}
 }

@@ -12,6 +12,8 @@
 #include "highgui.h"
 /* Function declarations */
 
+void findingValues(int ***forest, int ncols, int nrows, int time_instants);
+
 /* A helper function that prints the forest at a particular time */
 int** print_forest(int** forest, int rows, int cols );
 
