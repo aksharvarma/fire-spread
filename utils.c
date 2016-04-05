@@ -7,6 +7,7 @@
 #include<time.h>
 #include<limits.h>
 #include"utils.h"
+#include"spreads.h"
 #include"macros.h"
 #include "cv.h"
 #include "highgui.h"
@@ -362,8 +363,8 @@ void generateMatrix(int ***forest, int rows, int cols, int iterations, int simul
   	}	
 	for(i = 0; i<simulations; i++)
 	{
+		printf("%f\n", pBurning);
 		initForest(forest[0], rows, cols, pTree, pBurning);
-		
 		count = 0;
 /*		for(k = 1; k<=rows; k++)
 		{
@@ -377,23 +378,23 @@ void generateMatrix(int ***forest, int rows, int cols, int iterations, int simul
 		}
 			fprintf(fptr,"%Lf ",(long double)(count/(rows*cols)));
 */
-		for(j = 1; j<=iterations; j++)
+		for(j = 1; j<iterations; j++)
 		{
+			fillBoundary(forest[j-1],rows, cols);
 			spread(forest[j-1],forest[j],rows, cols, pImmune, pLightning, pGrow, spread_type, neighbourhood_type);
 			count = 0;
 			for(k = 1; k<=rows; k++)
 			{
 				for(l = 1; l<=cols; l++)
 				{
-					if((forest[j][k][l]/10<=2) && (forest[0][k][l]!=EMPTY_BURNING))
+					if((forest[j][k][l]/10==2) && (forest[j][k][l]!=EMPTY_BURNING))
 					{
 						count++;
 					}							
 				}
 			}
-			fprintf(fptr,"%Lf ",(long double)(count/(rows*cols)));
+			fprintf(fptr,"%f ",((float)count/(rows*cols)));
 		}
-		
 		fprintf(fptr, "\n");
 	}
 		
