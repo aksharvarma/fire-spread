@@ -314,7 +314,11 @@ int check_burning_wind(int** forest, int row_index, int col_index, int neighbour
 
 
 void findingValues(int ***forest, int ncols, int nrows, int time_instants) {
-
+	FILE* fptr;
+  fptr=fopen("forest_data.tr","w");
+  if(fptr==NULL){
+    printf("Error! File not opened\n");
+  }
   int *burning = (int *)calloc(time_instants,sizeof(int));
 	int *empty = (int *)calloc(time_instants,sizeof(int));	
 	int *trees = (int *)calloc(time_instants,sizeof(int));
@@ -340,6 +344,8 @@ void findingValues(int ***forest, int ncols, int nrows, int time_instants) {
 	}	
 	for(i = 1; i<=time_instants; i++)
 	{
-		printf("%d %d %d %d\n", i, empty[i-1], burning[i-1], trees[i-1]);	
+		printf("%d %d %d %d\n", i, empty[i-1], burning[i-1], trees[i-1]);
+		fprintf(fptr,	"%d %d %d %d\n", i, empty[i-1], burning[i-1], trees[i-1]);
 	}
+	fclose(fptr);
 }

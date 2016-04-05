@@ -152,6 +152,7 @@ int main(){
     cvShowImage("Fire_spread", input);
     cvWaitKey(5000);    
   }
-  findingValues(forest, cols, rows, steps);
+	fclose(fptr); 
+	findingValues(forest, cols, rows, steps);
   return 0;
 }
