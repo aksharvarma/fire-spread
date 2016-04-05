@@ -20,7 +20,7 @@ void on_trackbar( int i, void* b)
 /* Global Probability variables */
 /* long double pTree=0.8, pBurning=0.005, pLightning=0.00001, pImmune=0.25; */
 /* Values used for quick testing */
-long double pTree=0.8, pBurning=0.7, pLightning=0.01, pImmune=0.1, pGrow=0.1;
+long double pTree=0.8, pBurning=0.4, pLightning=0.01, pImmune=0.1, pGrow=0.1;
 
 int main(){
   printf("Empty:%d\nTree:%d\nBurning:%d\nStill Burning:%d\n\n",
@@ -29,15 +29,15 @@ int main(){
   /* Seed the random number. Always!!!! */
   srand(time(NULL));
   /* Iteration variables and n x n matrix. */
-  int i, j, k, n=10;/* 100; */
+  int i, j, k, n=15;/* 100; */
   /* Currently the same but can be changed when required. */
   int rows=n, cols=n;
   /* Number of steps to run simulation for */
-  int steps=5;/* pow(10,N); */
+  int steps=50;/* pow(10,N); */
 
   /* The types of the neighbourhood and the fire spreading */
   int neighbourhood_type=VON_NEUMANN;
-  int spread_type=GROW;
+  int spread_type=NORMAL;
   
   
   /* The 3d matrix which stores all states of the forest */
@@ -87,7 +87,7 @@ int main(){
     //printf("%llf\n", pBurning);
     fillBoundary(forest[k],rows, cols);
     /* The actual spreading of the forest fire. */
-    spread(forest[k-1],forest[k],rows, cols, pImmune, pLightning, spread_type, neighbourhood_type);
+    spread(forest[k-1],forest[k],rows, cols, pImmune, pLightning, pGrow, spread_type, neighbourhood_type);
     /* spread_burn_prob_neighbours(forest[k-1],forest[k],rows, cols, pImmune, pLightning, neighbourhood_type); */
     
     /* Printing the resultant forests */
