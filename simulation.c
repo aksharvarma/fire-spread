@@ -20,6 +20,7 @@ void on_trackbar( int i, void* b)
 /* Global Probability variables */
 /* long double pTree=0.8, pBurning=0.005, pLightning=0.00001, pImmune=0.25; */
 /* Values used for quick testing */
+
 long double pTree=0.8, pBurning=0.005, pLightning=0.01, pImmune=0.25, pGrow=0.1;
 
 
@@ -39,7 +40,7 @@ int main(){
 
   /* The types of the neighbourhood and the fire spreading */
   int neighbourhood_type=MOORE;
-  int spread_type=REALITY;
+  int spread_type=AGING_TREES;
   
   
   /* The 3d matrix which stores all states of the forest */
@@ -64,7 +65,9 @@ int main(){
   /* Initializing the forest */
   initForest(forest[0], rows, cols, pTree, pBurning);
   //initForest(forest[0], rows, cols, pTree, pBurning);
-
+  forest[0][1][1] = 20;
+  forest[0][1][2] = 10;
+  forest[0][1][3] = 10;
   print_forest(forest[0], rows, cols);
   printf("\n");
   file_print_forest(fptr,forest[0], rows, cols);
@@ -115,7 +118,7 @@ int main(){
 
     // Adding the openCV thing
 
-    IplImage *input = cvCreateImage(cvSize(rows, cols),IPL_DEPTH_8U,3);
+    IplImage *input = cvCreateImage(cvSize(rows, cols), IPL_DEPTH_8U, 3);
     uchar *pinput = (uchar*)input->imageData;
     int ii,jj;
     ii=jj=0;
@@ -138,7 +141,7 @@ int main(){
                 g=255;
                 b=0;
             } 
-            else if(forest[k][ii][jj] == BURNING)
+            else if(forest[k][ii][jj] == BURNING ||forest[k][ii][jj] == BABY_BURNING ||forest[k][ii][jj] == YOUNG_BURNING ||forest[k][ii][jj] == MIDDLE_BURNING ||forest[k][ii][jj] == OLD_BURNING )
             {
                 //printf("burn");          
                 r=255;
@@ -151,6 +154,36 @@ int main(){
                 r=255;
                 g=250;
                 b=36;
+            }
+            else if(forest[k][ii][jj] == BABY)
+            {
+                r=169;
+                g=255;
+                b=169;  
+            }
+            else if(forest[k][ii][jj] == YOUNG)
+            {
+                r=45;
+                g=208;
+                b=143;  
+            }
+            else if(forest[k][ii][jj] == MIDDLE)
+            {
+                r=0;
+                g=255;
+                b=0;  
+            }
+            else if(forest[k][ii][jj] == OLD)
+            {
+                r=218;
+                g=131;
+                b=0;  
+            }
+            else
+            {
+              r=0;
+              g=0;
+              b=0;
             }
 
           s=cvGet2D(input,ii-1,jj-1);
@@ -165,7 +198,5 @@ int main(){
     cvWaitKey(time_delay*1000);    
   }
   findingValues(forest, cols, rows, steps);
-  fclose(fptr);
-
   return 0;
 }
