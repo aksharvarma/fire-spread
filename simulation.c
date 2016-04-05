@@ -23,6 +23,7 @@ void on_trackbar( int i, void* b)
 long double pTree=0.8, pBurning=0.5, pLightning=0.01, pImmune=0.4, pGrow=0.1;
 
 int main(){
+
   printf("Empty:%d\nTree:%d\nBurning:%d\nStill Burning:%d\n\n",
 	 EMPTY, TREE, BURNING, STILL_BURNING);
 
@@ -71,21 +72,32 @@ int main(){
   fprintf(fptr, "\n");
   
   char *window_name = "Fire_spread";
-  int thresh1=10*pBurning;
-  int thresh2=100*pLightning;
+  int thresh1 = 10*pGrow;
+  int thresh2 = 100*pLightning;
+  int thresh3 = 10*pImmune;
+
+  // for time_delay
+  int thresh4 = 5;
+  int time_delay = thresh4;
+
   cvNamedWindow("Fire_spread", CV_WINDOW_NORMAL);
   //cvResizeWindow(window_name, 200, 200);   
-  cvCreateTrackbar("pBurning", "Fire_spread", &thresh1, 10, 0);   
+  cvCreateTrackbar("pGrow", "Fire_spread", &thresh1, 10, 0);   
   cvCreateTrackbar("pLightning", "Fire_spread", &thresh2, 100, 0);   
+  cvCreateTrackbar("pImmune", "Fire_spread", &thresh3, 10, 0);  
+
+  cvCreateTrackbar("time_delay", "Fire_spread", &thresh4, 10, 0);
 
   CvScalar s;
   /* Simulating for other steps */
   for(k=1;k<steps;k++){
 
-    pBurning=(float)(cvGetTrackbarPos("pBurning", "Fire_spread")/10.0);
-    pBurning=(float)(cvGetTrackbarPos("pLightning", "Fire_spread")/100.0);
-
+    pGrow=(float)(cvGetTrackbarPos("pGrow", "Fire_spread")/10.0);
+    pLightning=(float)(cvGetTrackbarPos("pLightning", "Fire_spread")/100.0);
+    pImmune = (float)(cvGetTrackbarPos("pImmune", "Fire_spread")/10.0);
     //printf("%LE\n", pBurning);
+
+    time_delay = cvGetTrackbarPos("time_delay", "Fire_spread");
 
     /* Filling the periodic boundaries before each step. */
     //printf("%llf\n", pBurning);
@@ -150,8 +162,9 @@ int main(){
         } 
     }
     cvShowImage("Fire_spread", input);
-    cvWaitKey(5000);    
+    cvWaitKey(time_delay*1000);    
   }
   findingValues(forest, cols, rows, steps);
+  fclose(fptr);
   return 0;
 }
