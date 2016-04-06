@@ -104,4 +104,9 @@
 #define LIGHT_RED 255, 105, 105
 #define PINK 255, 141, 191
 
+/* Kinds of boundary */
+#define PERIODIC (1)
+#define REFLECTIVE (2)
+
+
 #endif

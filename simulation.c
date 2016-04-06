@@ -29,8 +29,6 @@ int main(){
   printf("Empty:%d\nTree:%d\nBurning:%d\nStill Burning:%d\n\n",
 	 EMPTY, TREE, BURNING, STILL_BURNING);
 
-  int colors[] = {RED};
-  printf("%d\n", colors[0]);
 
   /* Seed the random number. Always!!!! */
   srand(time(NULL));
@@ -44,6 +42,8 @@ int main(){
   /* The types of the neighbourhood and the fire spreading */
   int neighbourhood_type=MOORE;
   int spread_type=REALITY;
+  int boundary_type=REFLECTIVE;
+
   
   
   /* The 3d matrix which stores all states of the forest */
@@ -68,9 +68,6 @@ int main(){
   /* Initializing the forest */
   initForest(forest[0], rows, cols, pTree, pBurning);
   //initForest(forest[0], rows, cols, pTree, pBurning);
-  forest[0][1][1] = 20;
-  forest[0][1][2] = 10;
-  forest[0][1][3] = 10;
   print_forest(forest[0], rows, cols);
   printf("\n");
   file_print_forest(fptr,forest[0], rows, cols);
@@ -82,7 +79,7 @@ int main(){
   int thresh3 = 10*pImmune;
 
   // for time_delay
-  int thresh4 = 5;
+  int thresh4 = 1;
   int time_delay = thresh4;
 
   cvNamedWindow("Fire_spread", CV_WINDOW_NORMAL);
@@ -95,7 +92,9 @@ int main(){
 
   CvScalar s;
   /* Simulating for other steps */
-	//generateMatrix(forest, rows, cols,  steps, 1000,  pTree, pBurning, pGrow,  pImmune, pLightning, spread_type, neighbourhood_type);
+
+  /* generateMatrix(forest, rows, cols,  steps, 1000,  pTree, pBurning, pGrow,  pImmune, pLightning, spread_type, neighbourhood_type, boundary_type); */
+
   for(k=1;k<steps;k++){
 
     pGrow=(float)(cvGetTrackbarPos("pGrow", "Fire_spread")/10.0);
@@ -107,7 +106,7 @@ int main(){
 
     /* Filling the periodic boundaries before each step. */
     //printf("%llf\n", pBurning);
-    fillBoundary(forest[k],rows, cols);
+    fillBoundary(forest[k],rows, cols, boundary_type);
     /* The actual spreading of the forest fire. */
     spread(forest[k-1],forest[k],rows, cols, pImmune, pLightning, pGrow, spread_type, neighbourhood_type);
     /* spread_burn_prob_neighbours(forest[k-1],forest[k],rows, cols, pImmune, pLightning, neighbourhood_type); */

@@ -15,7 +15,7 @@
 void findingValues(int ***forest, int ncols, int nrows, int time_instants);
 
 
-void generateMatrix(int ***forest, int rows, int cols, int iterations, int simulations, float pTree, float pBurning, float pGrow, float pImmune, float pLightning, int spread_type, int neighbourhood_type);
+void generateMatrix(int ***forest, int rows, int cols, int iterations, int simulations, float pTree, float pBurning, float pGrow, float pImmune, float pLightning, int spread_type, int neighbourhood_type, int boundary_type);
 
 
 /* A helper function that prints the forest at a particular time */
@@ -37,7 +37,7 @@ int random_age();
 void initForest_aging(int** forest,int rows, int cols, long double pTree,long double pBurning);
 
 /* After every iteration, renew the boundaries */
-void fillBoundary(int** forest, int rows, int cols);
+void fillBoundary(int** forest, int rows, int cols, int boundary_type);
 
 /* This returns 1 if any neighbours burn, 0 otherwise */
 int do_neighbours_burn(int** forest, int row_index, int col_index, int neighbourhood_type);
