@@ -10,7 +10,7 @@
 #include "cv.h"
 #include "highgui.h"
 
-void on_trackbar( int i, void* b)
+void on_trackbar( int i, void* bleh)
 {
  
  //printf("TRACKING... "); 
@@ -29,6 +29,9 @@ int main(){
   printf("Empty:%d\nTree:%d\nBurning:%d\nStill Burning:%d\n\n",
 	 EMPTY, TREE, BURNING, STILL_BURNING);
 
+  int colors[] = {RED};
+  printf("%d\n", colors[0]);
+
   /* Seed the random number. Always!!!! */
   srand(time(NULL));
   /* Iteration variables and n x n matrix. */
@@ -40,7 +43,7 @@ int main(){
 
   /* The types of the neighbourhood and the fire spreading */
   int neighbourhood_type=MOORE;
-  int spread_type=AGING_TREES;
+  int spread_type=REALITY;
   
   
   /* The 3d matrix which stores all states of the forest */
@@ -92,7 +95,7 @@ int main(){
 
   CvScalar s;
   /* Simulating for other steps */
-	generateMatrix(forest, rows, cols,  steps, 1000,  pTree, pBurning, pGrow,  pImmune, pLightning, spread_type, neighbourhood_type);
+	//generateMatrix(forest, rows, cols,  steps, 1000,  pTree, pBurning, pGrow,  pImmune, pLightning, spread_type, neighbourhood_type);
   for(k=1;k<steps;k++){
 
     pGrow=(float)(cvGetTrackbarPos("pGrow", "Fire_spread")/10.0);
@@ -197,6 +200,6 @@ int main(){
     cvShowImage("Fire_spread", input);
     cvWaitKey(time_delay*1000);    
   }
-  findingValues(forest, cols, rows, steps);
+  //findingValues(forest, cols, rows, steps);
   return 0;
 }

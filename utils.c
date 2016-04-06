@@ -13,10 +13,10 @@
 #include "highgui.h"
 /* Function declarations */
 
-void findingValues(int ***forest, int ncols, int nrows, int time_instants);
+//void findingValues(int ***forest, int ncols, int nrows, int time_instants);
 
 
-void generateMatrix(int ***forest, int rows, int cols, int iterations, int simulations, float pTree, float pBurning, float pGrow, float pImmune, float pLightning, int spread_type, int neighbourhood_type);
+//void generateMatrix(int ***forest, int rows, int cols, int iterations, int simulations, float pTree, float pBurning, float pGrow, float pImmune, float pLightning, int spread_type, int neighbourhood_type);
 
 /* A helper function that prints the forest at a particular time */
 int** print_forest(int** forest, int rows, int cols );
@@ -316,88 +316,88 @@ int check_burning_wind(int** forest, int row_index, int col_index, int neighbour
 }
 
 
-void findingValues(int ***forest, int ncols, int nrows, int time_instants) {
-	FILE* fptr;
-  fptr=fopen("forest_data.tr","w");
-  if(fptr==NULL){
-    printf("Error! File not opened\n");
-  }
-  int *burning = (int *)calloc(time_instants,sizeof(int));
-	int *empty = (int *)calloc(time_instants,sizeof(int));	
-	int *trees = (int *)calloc(time_instants,sizeof(int));
-	int i,j,k;
-	for(i = 0; i<time_instants;i++)
-	{
-		for(j=1; j<=nrows; j++)
-		{
-			for(k=1;k<=ncols; k++)
-			{
-				switch(forest[i][j][k]/10)
-				{
-					case 0: empty[i]++;
-									break;
-					case 1: trees[i]++;
-									break;
-					case 2: 
-							burning[i]++;
-									break;
-				}
-			}
-		}
-	}	
-	for(i = 1; i<=time_instants; i++)
-	{
-		printf("%d %d %d %d\n", i, empty[i-1], burning[i-1], trees[i-1]);
-		fprintf(fptr,	"%d %.2f %.2f %.2f\n", i, empty[i-1]/(ncols*nrows), burning[i-1]/(ncols*nrows), trees[i-1]/(ncols*nrows));
-	}
-	fclose(fptr);
-}
+// void findingValues(int ***forest, int ncols, int nrows, int time_instants) {
+// 	FILE* fptr;
+//   fptr=fopen("forest_data.tr","w");
+//   if(fptr==NULL){
+//     printf("Error! File not opened\n");
+//   }
+//   int *burning = (int *)calloc(time_instants,sizeof(int));
+// 	int *empty = (int *)calloc(time_instants,sizeof(int));	
+// 	int *trees = (int *)calloc(time_instants,sizeof(int));
+// 	int i,j,k;
+// 	for(i = 0; i<time_instants;i++)
+// 	{
+// 		for(j=1; j<=nrows; j++)
+// 		{
+// 			for(k=1;k<=ncols; k++)
+// 			{
+// 				switch(forest[i][j][k]/10)
+// 				{
+// 					case 0: empty[i]++;
+// 									break;
+// 					case 1: trees[i]++;
+// 									break;
+// 					case 2: 
+// 							burning[i]++;
+// 									break;
+// 				}
+// 			}
+// 		}
+// 	}	
+// 	for(i = 1; i<=time_instants; i++)
+// 	{
+// 		printf("%d %d %d %d\n", i, empty[i-1], burning[i-1], trees[i-1]);
+// 		fprintf(fptr,	"%d %.2f %.2f %.2f\n", i, empty[i-1]/(ncols*nrows), burning[i-1]/(ncols*nrows), trees[i-1]/(ncols*nrows));
+// 	}
+// 	fclose(fptr);
+// }
 
-void generateMatrix(int ***forest, int rows, int cols, int iterations, int simulations, float pTree, float pBurning, float pGrow, float pImmune, float pLightning, int spread_type, int neighbourhood_type){
+// void generateMatrix(int ***forest, int rows, int cols, int iterations, int simulations, float pTree, float pBurning, float pGrow, float pImmune, float pLightning, int spread_type, int neighbourhood_type){
 		
-	int i,j,k,l,count;
-	FILE* fptr;
-  	fptr=fopen("bell_please.tr","w");
-  	if(fptr==NULL){
-    		printf("Error! File not opened\n");
-  	}	
-	for(i = 0; i<simulations; i++)
-	{
-		printf("%d\n", i);
-		initForest(forest[0], rows, cols, pTree, pBurning);
-		count = 0;
-/*		for(k = 1; k<=rows; k++)
-		{
-			for(l = 1; l<=cols; l++)
-			{
-				if((forest[0][k][l]/10<=2) && (forest[0][k][l]!=EMPTY_BURNING))
-				{
-					count++;
-				}							
-			}
-		}
-			fprintf(fptr,"%Lf ",(long double)(count/(rows*cols)));
-*/
-		for(j = 1; j<iterations; j++)
-		{
-			fillBoundary(forest[j-1],rows, cols);
-			spread(forest[j-1],forest[j],rows, cols, pImmune, pLightning, pGrow, spread_type, neighbourhood_type);
-			count = 0;
-			for(k = 1; k<=rows; k++)
-			{
-				for(l = 1; l<=cols; l++)
-				{
-					if((forest[j][k][l]/10==2) && (forest[j][k][l]!=EMPTY_BURNING))
-					{
-						count++;
-					}							
-				}
-			}
-			fprintf(fptr,"%f ",((float)count/(rows*cols)));
-		}
-		fprintf(fptr, "\n");
-	}
+// 	int i,j,k,l,count;
+// 	FILE* fptr;
+//   	fptr=fopen("bell_please.tr","w");
+//   	if(fptr==NULL){
+//     		printf("Error! File not opened\n");
+//   	}	
+// 	for(i = 0; i<simulations; i++)
+// 	{
+// 		printf("%d\n", i);
+// 		initForest(forest[0], rows, cols, pTree, pBurning);
+// 		count = 0;
+// 		for(k = 1; k<=rows; k++)
+// 		{
+// 			for(l = 1; l<=cols; l++)
+// 			{
+// 				if((forest[0][k][l]/10<=2) && (forest[0][k][l]!=EMPTY_BURNING))
+// 				{
+// 					count++;
+// 				}							
+// 			}
+// 		}
+// 			fprintf(fptr,"%Lf ",(long double)(count/(rows*cols)));
+
+// 		for(j = 1; j<iterations; j++)
+// 		{
+// 			fillBoundary(forest[j-1],rows, cols);
+// 			spread(forest[j-1],forest[j],rows, cols, pImmune, pLightning, pGrow, spread_type, neighbourhood_type);
+// 			count = 0;
+// 			for(k = 1; k<=rows; k++)
+// 			{
+// 				for(l = 1; l<=cols; l++)
+// 				{
+// 					if((forest[j][k][l]/10==2) && (forest[j][k][l]!=EMPTY_BURNING))
+// 					{
+// 						count++;
+// 					}							
+// 				}
+// 			}
+// 			fprintf(fptr,"%f ",((float)count/(rows*cols)));
+// 		}
+// 		fprintf(fptr, "\n");
+// 	}
 		
-	fclose(fptr);
-}
+// 	fclose(fptr);
+// }
 

@@ -84,4 +84,24 @@
 #define DAMP (7)
 #define REALITY (8)
 
+#define RED 255, 0, 0
+#define GREEN 0, 255, 0
+#define BLUE 0, 0, 255
+
+#define BLACK 0, 0, 0
+#define WHITE 255, 255, 255
+
+/*STILL_BURNING*/
+#define YELLOW 255, 247, 0
+
+/* These are the TREE colors at different ages alongwith GREEN */
+#define LIGHT_GREEN 187, 255, 141
+#define TEAL 30, 170, 128
+#define BROWN 138, 108, 37
+
+/* These are the burning colors alongwith RED */
+#define MAROON 142, 40, 40
+#define LIGHT_RED 255, 105, 105
+#define PINK 255, 141, 191
+
 #endif
