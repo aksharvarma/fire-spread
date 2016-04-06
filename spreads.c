@@ -485,7 +485,7 @@ void spread_reality(int** old, int** new, int rows, int cols, long double pImmun
 
 
   
-  long double pGrow_burnt=pGrow+ (1-pGrow)/2;
+  long double pGrow_burnt=pGrow+ (1-pGrow)/10;
   long double pGrow_used=pGrow;
   long double pImmune_damp = (1-pImmune)/2+pImmune;
   long double pImmune_used=pImmune;
@@ -506,7 +506,7 @@ void spread_reality(int** old, int** new, int rows, int cols, long double pImmun
 	  pGrow_used=pGrow;
 	
 	if(U<pGrow_used)
-	  new[i][j]=TREE+random_age();
+	  new[i][j]=BABY;
 	else
 	  new[i][j]=EMPTY;
 	

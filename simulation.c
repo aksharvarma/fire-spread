@@ -40,9 +40,9 @@ int main(){
   int steps=100;/* pow(10,N); */
 
   /* The types of the neighbourhood and the fire spreading */
-  int neighbourhood_type=MOORE;
+  int neighbourhood_type=VON_NEUMANN;
   int spread_type=REALITY;
-  int boundary_type=REFLECTIVE;
+  int boundary_type=PERIODIC;
 
   
   
