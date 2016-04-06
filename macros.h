@@ -84,4 +84,8 @@
 #define DAMP (7)
 #define REALITY (8)
 
+/* Kinds of boundary */
+#define PERIODIC (1)
+#define REFLECTIVE (2)
+
 #endif
