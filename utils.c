@@ -49,6 +49,8 @@ int count_burning_neighbours(int** forest, int row_index, int col_index, int nei
 int check_burning_wind(int** forest, int row_index, int col_index, int neighbourhood_type, int wind_speed, int wind_direction, long double pImmune, int rows, int cols);
 /* This merely prints the forest matrix */
 
+void cv_animation(int** forest, int rows, int cols, int iteration, IplImage *input);
+
 int** print_forest(int** forest, int rows, int cols ){
   int i, j;
 
@@ -428,4 +430,116 @@ void generateMatrix(int ***forest, int rows, int cols, int iterations, int simul
     fclose(fptr);
   }
 
+void cv_animation(int** forest, int rows, int cols, int iteration, IplImage *input){
 
+    CvScalar s;
+    uchar *pinput = (uchar*)input->imageData;
+    int ii,jj;
+    ii=jj=0;
+    //int color[];
+    for(ii=1;ii<=input->height;ii++)
+    {      
+        for(jj=1;jj<=input->width;jj++)
+        {
+            int r,g,b;
+            r=g=b=0;
+
+            if (forest[ii][jj] == EMPTY)
+            {
+                //printf("empty_cell");
+                int color[]={BLACK};
+                r=g=b=color[0];  
+            }
+            else if(forest[ii][jj] == TREE)
+            {
+                //printf("tree");
+                int color[]={GREEN};
+                r=color[0];
+                g=color[1];
+                b=color[2];
+            } 
+            else if(forest[ii][jj] == BURNING || forest[ii][jj] == OLD_BURNING) //||forest[ii][jj] == BABY_BURNING ||forest[ii][jj] == YOUNG_BURNING ||forest[ii][jj] == MIDDLE_BURNING ||forest[ii][jj] == OLD_BURNING )
+            {
+                //printf("burn");  
+                int color[]={RED};        
+                r=color[0];
+                g=color[1];
+                b=color[2];
+            }
+            else if(forest[ii][jj] == STILL_BURNING)
+            {
+                //printf("still_burning");          
+                int color[]={YELLOW};
+                r=color[0];
+                g=color[1];
+                b=color[2];
+            }
+            else if(forest[ii][jj] == BABY_BURNING)
+            {
+                //printf("still_burning");          
+                int color[]={PINK};
+                r=color[0];
+                g=color[1];
+                b=color[2];
+            }
+            else if(forest[ii][jj] == YOUNG_BURNING)
+            {
+                //printf("still_burning");          
+                int color[]={MAROON};
+                r=color[0];
+                g=color[1];
+                b=color[2];
+            }
+            else if(forest[ii][jj] == MIDDLE_BURNING)
+            {
+                //printf("still_burning");          
+                int color[]={LIGHT_RED};
+                r=color[0];
+                g=color[1];
+                b=color[2];
+            }
+            else if(forest[ii][jj] == BABY)
+            {
+                int color[]={LIGHT_GREEN};
+                r=color[0];
+                g=color[1];
+                b=color[2];
+            }
+            else if(forest[ii][jj] == YOUNG)
+            {
+                int color[]={GREEN};
+                r=color[0];
+                g=color[1];
+                b=color[2];
+            }
+            else if(forest[ii][jj] == MIDDLE)
+            {
+                int color[]={TEAL};
+                r=color[0];
+                g=color[1];
+                b=color[2];  
+            }
+            else if(forest[ii][jj] == OLD)
+            {
+                int color[]={BROWN};
+                r=color[0];
+                g=color[1];
+                b=color[2];
+            }
+            else
+            {
+              r=0;
+              g=0;
+              b=0;
+            }
+
+          s=cvGet2D(input,ii-1,jj-1);
+          s.val[0]=b;
+          s.val[1]=g;
+          s.val[2]=r;
+          cvSet2D(input,ii-1,jj-1,s); // set the (i,j) pixel value
+
+        } 
+    }
+
+}

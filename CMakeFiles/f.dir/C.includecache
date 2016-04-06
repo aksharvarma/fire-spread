@@ -12,7 +12,7 @@ cv.h
 highgui.h
 /home/shruti/Desktop/fire/fire-spread/highgui.h
 
-/home/shruti/Desktop/fire/fire-spread/simulation.c
+/home/shruti/Desktop/fire/fire-spread/spreads.h
 stdio.h
 -
 stdlib.h
@@ -23,18 +23,18 @@ time.h
 -
 limits.h
 -
-spreads.h
-/home/shruti/Desktop/fire/fire-spread/spreads.h
-utils.h
-/home/shruti/Desktop/fire/fire-spread/utils.h
 macros.h
 /home/shruti/Desktop/fire/fire-spread/macros.h
+utils.h
+/home/shruti/Desktop/fire/fire-spread/utils.h
+spreads.h
+/home/shruti/Desktop/fire/fire-spread/spreads.h
 cv.h
 /home/shruti/Desktop/fire/fire-spread/cv.h
 highgui.h
 /home/shruti/Desktop/fire/fire-spread/highgui.h
 
-/home/shruti/Desktop/fire/fire-spread/spreads.h
+/home/shruti/Desktop/fire/fire-spread/utils.c
 stdio.h
 -
 stdlib.h
@@ -45,12 +45,12 @@ time.h
 -
 limits.h
 -
-macros.h
-/home/shruti/Desktop/fire/fire-spread/macros.h
 utils.h
 /home/shruti/Desktop/fire/fire-spread/utils.h
 spreads.h
 /home/shruti/Desktop/fire/fire-spread/spreads.h
+macros.h
+/home/shruti/Desktop/fire/fire-spread/macros.h
 cv.h
 /home/shruti/Desktop/fire/fire-spread/cv.h
 highgui.h

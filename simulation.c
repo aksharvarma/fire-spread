@@ -41,7 +41,7 @@ int main(){
 
   /* The types of the neighbourhood and the fire spreading */
   int neighbourhood_type=VON_NEUMANN;
-  int spread_type=REALITY;
+  int spread_type=TWO_STEPS_TO_BURN;
   int boundary_type=PERIODIC;
 
   
@@ -90,7 +90,6 @@ int main(){
 
   cvCreateTrackbar("time_delay", "Fire_spread", &thresh4, 10, 0);
 
-  CvScalar s;
   /* Simulating for other steps */
 
   /* generateMatrix(forest, rows, cols,  steps, 1000,  pTree, pBurning, pGrow,  pImmune, pLightning, spread_type, neighbourhood_type, boundary_type); */
@@ -100,8 +99,6 @@ int main(){
     pGrow=(float)(cvGetTrackbarPos("pGrow", "Fire_spread")/10.0);
     pLightning=(float)(cvGetTrackbarPos("pLightning", "Fire_spread")/100.0);
     pImmune = (float)(cvGetTrackbarPos("pImmune", "Fire_spread")/10.0);
-    //printf("%LE\n", pBurning);
-
     time_delay = cvGetTrackbarPos("time_delay", "Fire_spread");
 
     /* Filling the periodic boundaries before each step. */
@@ -119,85 +116,11 @@ int main(){
 
 
     // Adding the openCV thing
-
     IplImage *input = cvCreateImage(cvSize(rows, cols), IPL_DEPTH_8U, 3);
-    uchar *pinput = (uchar*)input->imageData;
-    int ii,jj;
-    ii=jj=0;
-    for(ii=1;ii<=input->height;ii++)
-    {      
-        for(jj=1;jj<=input->width;jj++)
-        {
-            int r,g,b;
-            r=g=b=0;
-
-            if (forest[k][ii][jj] == EMPTY)
-            {
-                //printf("empty_cell");
-                r=g=b=0;  
-            }
-            else if(forest[k][ii][jj] == TREE)
-            {
-                //printf("tree");
-                r=0;
-                g=255;
-                b=0;
-            } 
-            else if(forest[k][ii][jj] == BURNING ||forest[k][ii][jj] == BABY_BURNING ||forest[k][ii][jj] == YOUNG_BURNING ||forest[k][ii][jj] == MIDDLE_BURNING ||forest[k][ii][jj] == OLD_BURNING )
-            {
-                //printf("burn");          
-                r=255;
-                g=0;
-                b=0;
-            }
-            else if(forest[k][ii][jj] == STILL_BURNING)
-            {
-                //printf("still_burning");          
-                r=255;
-                g=250;
-                b=36;
-            }
-            else if(forest[k][ii][jj] == BABY)
-            {
-                r=169;
-                g=255;
-                b=169;  
-            }
-            else if(forest[k][ii][jj] == YOUNG)
-            {
-                r=45;
-                g=208;
-                b=143;  
-            }
-            else if(forest[k][ii][jj] == MIDDLE)
-            {
-                r=0;
-                g=255;
-                b=0;  
-            }
-            else if(forest[k][ii][jj] == OLD)
-            {
-                r=218;
-                g=131;
-                b=0;  
-            }
-            else
-            {
-              r=0;
-              g=0;
-              b=0;
-            }
-
-          s=cvGet2D(input,ii-1,jj-1);
-          s.val[0]=b;
-          s.val[1]=g;
-          s.val[2]=r;
-          cvSet2D(input,ii-1,jj-1,s); // set the (i,j) pixel value
-
-        } 
-    }
+    cv_animation(forest[k], rows, cols, k, input);  
     cvShowImage("Fire_spread", input);
     cvWaitKey(time_delay*1000);    
+
   }
   //findingValues(forest, cols, rows, steps);
   return 0;
